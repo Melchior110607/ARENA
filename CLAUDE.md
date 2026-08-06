@@ -16,7 +16,7 @@ Ce que le prototype doit prouver :
 1. comment une entreprise est présentée ;
 2. quelles informations collecter auprès des fournisseurs et des marques ;
 3. comment une marque recherche un fournisseur ;
-4. comment fonctionnent les connexions entre entreprises ;
+4. comment fonctionnent les connexions entre entreprises et le fil de publications ;
 5. comment présenter produits et capacités industrielles ;
 6. comment représenter une chaîne de traçabilité.
 
@@ -68,8 +68,8 @@ cd frontend && npm run lint && npx tsc --noEmit
 ```
 backend/app/            main.py · models.py · store.py · routers/
 backend/data/           companies · products · traceability · connections ·
-                        conversations · opportunities · relationships  (.json)
-frontend/src/app/       les 10 surfaces (App Router)
+                        conversations · notices  (.json)
+frontend/src/app/       les surfaces (App Router)
 frontend/src/components/ui/      primitives shadcn — voir règle d'accès plus bas
 frontend/src/components/arena/   composants métier partagés
 frontend/src/lib/       api.ts · types.ts · persona.ts
@@ -77,15 +77,30 @@ frontend/src/lib/       api.ts · types.ts · persona.ts
 
 ### Surfaces
 
-`/` · `/companies` · `/companies/[id]` · `/products` · `/products/[id]` ·
-`/products/[id]/traceability` · `/connections` · `/messages` · `/opportunities` · `/pipeline`
+`/` (le Floor si connecté, la page publique sinon) · `/floor/[id]` · `/companies` ·
+`/companies/[id]` · `/products` · `/products/[id]` · `/products/[id]/traceability` ·
+`/connections` · `/messages`
 
 ### API
 
-`GET /health` · `GET|GET /companies[/{id}]` · `GET|GET /products[/{id}]` ·
-`GET /products/{id}/traceability` · `GET /opportunities` · `POST /opportunities/{id}/interest` ·
+`GET /health` · `GET /filters` · `GET /personas` · `GET /feed?as=` ·
+`GET|POST /notices` · `GET /notices/{id}` · `POST /notices/{id}/interest` ·
+`GET /companies[/{id}]` · `GET /products[/{id}]` · `GET /products/{id}/traceability` ·
 `GET|POST /connections` · `PATCH /connections/{id}` · `GET /messages[/{conversation_id}]` ·
-`POST /messages` · `GET /relationships` · `PATCH /relationships/{id}` · `GET /filters`
+`POST /messages`
+
+### Le modèle réseau
+
+Une **notice** est une publication : `need` (un besoin) ou `offer` (un produit du catalogue de
+l'auteur). Chaque notice déclare `addressed_to` — lesquels des cinq types d'entreprise elle vise ;
+liste vide = ouvert à tous. `GET /feed` renvoie les notices des connexions d'abord, puis un « for
+you » classé par un score explicable (`store._notice_score`) : adressage, secteur — dominant —,
+position amont dans la chaîne, matières partagées. Aucune recommandation par IA, le cahier des
+charges l'exclut.
+
+Une **demande de connexion** porte toujours un `context` : `company`, `product` ou `notice`.
+**Accepter ouvre une conversation** (`store.open_conversation`) amorcée par la note de la demande et
+portant le même contexte. C'est la seule conséquence d'une acceptation — il n'y a pas de pipeline.
 
 ### Flux de données
 
@@ -93,21 +108,27 @@ Les lectures côté serveur (RSC) passent par `INTERNAL_API_URL` (`http://backen
 depuis le navigateur passent par `NEXT_PUBLIC_API_URL` (`http://localhost:8100`), CORS ouvert côté
 FastAPI. Les pages qui lisent des données mutables déclarent `export const dynamic = 'force-dynamic'`.
 
-### Entreprise simulée
+### Entreprise simulée et mode visiteur
 
-Il n'y a pas d'authentification. Un sélecteur « Viewing as … » dans l'en-tête choisit l'entreprise du
-point de vue de laquelle on navigue. La valeur est persistée en cookie et transmise au backend en
-`?as=<company_id>` par les pages Connections, Messages et Pipeline.
+Il n'y a pas d'authentification. Un sélecteur dans l'en-tête choisit l'entreprise du point de vue de
+laquelle on navigue ; la valeur est persistée en cookie et transmise au backend en `?as=<company_id>`.
+
+Le cookie accepte aussi la sentinelle `visitor` (`src/lib/persona.ts`), qui vaut « déconnecté ». `/`
+affiche alors la page publique au lieu du fil, et les surfaces réservées aux membres redirigent vers
+`/` via `requireCompanyId()` (`src/lib/persona.server.ts`). `visitor` n'est pas un id d'entreprise :
+aucun appel API ne doit être fait avec cette valeur.
 
 ## Conventions
 
 - Données fictives assumées et signalées dans l'UI. Aucune entreprise réelle, aucun chiffre présenté
   comme véridique.
+- `Badge` déstructure `variant = "default"`, ce qui écrase son `defaultVariants` cva : toute pastille
+  passive doit passer `variant="outline"` explicitement.
 - Pas de hex bruts dans les composants : les couleurs passent par les tokens Tailwind v4 définis dans
   `src/app/globals.css` (`@theme`). Pas de `tailwind.config.js`.
 - Les types TypeScript de `src/lib/types.ts` sont le miroir des schémas Pydantic de
   `backend/app/models.py`. Toute modification de l'un impose la modification de l'autre.
-- Statuts jamais encodés par la couleur seule (traçabilité, connexions, pipeline).
+- Statuts jamais encodés par la couleur seule (traçabilité, connexions, adressage des notices).
 - Plancher qualité UI : responsive desktop-first jusqu'au mobile, focus clavier visible, contraste
   ≥ 4.5:1, `prefers-reduced-motion` respecté.
 

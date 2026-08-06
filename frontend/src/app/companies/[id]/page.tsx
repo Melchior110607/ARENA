@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ConnectButton } from "@/components/arena/actions";
 import { ChainLocator } from "@/components/arena/chain-locator";
+import { ConnectionStanding, standingWith } from "@/components/arena/connection-standing";
 import { MaterialSwatch } from "@/components/arena/material-swatch";
 import { Monogram } from "@/components/arena/monogram";
 import { SpecSheet, SpecValue, specList, type SpecRow } from "@/components/arena/spec-sheet";
@@ -14,7 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ApiError, getCompany } from "@/lib/api";
+import { ApiError, getCompany, getConnections } from "@/lib/api";
+import { isVisitor } from "@/lib/persona";
+import { getPersonaId } from "@/lib/persona.server";
 import {
   CHAIN_POSITION_LABELS,
   COMPANY_TYPE_LABELS,
@@ -50,6 +54,14 @@ export default async function CompanyProfilePage({
 
   const { company, products, network } = detail;
   const c = company.capabilities;
+
+  /* Who is reading, and where the two companies stand. */
+  const personaId = await getPersonaId();
+  const signedOut = isVisitor(personaId);
+  const ownRecord = !signedOut && personaId === company.id;
+  const connectionsView =
+    signedOut || ownRecord ? null : await getConnections(personaId).catch(() => null);
+  const standing = signedOut ? null : standingWith(connectionsView, personaId, company.id);
 
   const capabilityRows: SpecRow[] = [
     { label: "Product types", value: specList(c.product_types) },
@@ -89,6 +101,36 @@ export default async function CompanyProfilePage({
               {company.subsector} · {company.city}, {company.country_name}
             </p>
             <p className="mt-2 max-w-2xl text-base">{company.tagline}</p>
+
+            {/* The act that makes a network a network — asking, from the record itself. */}
+            <div className="mt-5">
+              {signedOut ? (
+                <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                  You are reading this record signed out. Sign in as a member company
+                  from the masthead to request a connection.
+                </p>
+              ) : ownRecord ? (
+                <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                  Your own record — this is how counterparties read {company.name}.
+                </p>
+              ) : standing ? (
+                <ConnectionStanding
+                  state={standing.state}
+                  counterpartName={company.name}
+                  date={standing.date}
+                  threadId={standing.threadId}
+                />
+              ) : (
+                <ConnectButton
+                  fromId={personaId}
+                  toId={company.id}
+                  companyName={company.name}
+                  label="Request connection"
+                  context={{ type: "company", id: company.id, label: company.name }}
+                  objectLogo={company.logo}
+                />
+              )}
+            </div>
           </div>
         </div>
         <ChainLocator position={company.chain_position} sector={company.sector} />

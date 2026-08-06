@@ -2,13 +2,17 @@ import { Fragment } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ConnectButton } from "@/components/arena/actions";
+import { ConnectionStanding, standingWith } from "@/components/arena/connection-standing";
 import { MaterialSwatch } from "@/components/arena/material-swatch";
 import { Monogram } from "@/components/arena/monogram";
 import { SpecSheet, SpecValue, specList, type SpecRow } from "@/components/arena/spec-sheet";
 import { StatusSeal } from "@/components/arena/status-seal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ApiError, getProduct, getTraceability } from "@/lib/api";
+import { ApiError, getConnections, getProduct, getTraceability } from "@/lib/api";
+import { isVisitor } from "@/lib/persona";
+import { getPersonaId } from "@/lib/persona.server";
 import {
   COMPANY_TYPE_LABELS,
   SECTOR_LABELS,
@@ -101,6 +105,14 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   // A missing chain record degrades the manifest to the honest empty plate.
   const chain = has_traceability ? await getTraceability(id).catch(() => null) : null;
 
+  /* Who is reading, and where they stand with the supplier. */
+  const personaId = await getPersonaId();
+  const signedOut = isVisitor(personaId);
+  const ownArticle = !signedOut && personaId === supplier.id;
+  const connectionsView =
+    signedOut || ownArticle ? null : await getConnections(personaId).catch(() => null);
+  const standing = signedOut ? null : standingWith(connectionsView, personaId, supplier.id);
+
   const specRows: SpecRow[] = [
     ...product.specs.map((spec) => ({
       label: spec.label,
@@ -184,6 +196,36 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             <Button asChild variant="outline" className="mt-3 w-full">
               <Link href={`/companies/${supplier.id}`}>View supplier profile</Link>
             </Button>
+          </div>
+
+          {/* Ask to connect about this article — the request carries the swatch. */}
+          <div>
+            {signedOut ? (
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Reading signed out. Sign in as a member company from the masthead to
+                request a connection about this article.
+              </p>
+            ) : ownArticle ? (
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Your own article — this is how counterparties read it.
+              </p>
+            ) : standing ? (
+              <ConnectionStanding
+                state={standing.state}
+                counterpartName={supplier.name}
+                date={standing.date}
+                threadId={standing.threadId}
+              />
+            ) : (
+              <ConnectButton
+                fromId={personaId}
+                toId={supplier.id}
+                companyName={supplier.name}
+                label="Request connection — about this article"
+                context={{ type: "product", id: product.id, label: product.name }}
+                objectVisual={product.visual}
+              />
+            )}
           </div>
         </div>
 

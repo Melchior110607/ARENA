@@ -3,12 +3,14 @@ import { redirect } from "next/navigation";
 
 import { ConnectButton, RespondButtons } from "@/components/arena/actions";
 import { ChainLocator } from "@/components/arena/chain-locator";
+import { CONTEXT_KIND, ContextGlyph, contextHref } from "@/components/arena/context-glyph";
+import { MaterialSwatch } from "@/components/arena/material-swatch";
 import { Monogram } from "@/components/arena/monogram";
 import { pad2 } from "@/components/arena/registry";
-import { getCompanies, getConnections } from "@/lib/api";
+import { getCompanies, getConnections, getProducts } from "@/lib/api";
 import { requireCompanyId } from "@/lib/persona.server";
 import { CHAIN_POSITION_LABELS, COMPANY_TYPE_LABELS } from "@/lib/types";
-import type { Company, Connection } from "@/lib/types";
+import type { Company, Connection, ConnectionContext, Product } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -31,21 +33,88 @@ function EmptyLine({ children }: { children: React.ReactNode }) {
   return <p className="border-b py-4 text-sm text-muted-foreground">{children}</p>;
 }
 
+/**
+ * What the request is about, drawn: an article shows its material swatch, a
+ * company its nameplate, a notice its posted-sheet glyph. The label is a live
+ * link into the record — the origin of a request is a place you can go.
+ */
+function RequestObject({
+  context,
+  product,
+  contextCompany,
+  compact = false,
+}: {
+  context: ConnectionContext | null;
+  product: Product | undefined;
+  contextCompany: Company | undefined;
+  /** One-line form for the compact rows of the connected register. */
+  compact?: boolean;
+}) {
+  if (!context) return null;
+
+  const evidence =
+    context.type === "product" && product ? (
+      <span className={compact ? "h-6 w-8 shrink-0" : "h-8 w-[42px] shrink-0"}>
+        <MaterialSwatch visual={product.visual} />
+      </span>
+    ) : context.type === "company" && contextCompany ? (
+      <Monogram logo={contextCompany.logo} size={compact ? 20 : 26} />
+    ) : (
+      <span className="text-muted-foreground">
+        <ContextGlyph type={context.type} size={compact ? 15 : 18} />
+      </span>
+    );
+
+  return (
+    <p className="flex min-w-0 items-center gap-2.5">
+      <span className="arena-data shrink-0 text-muted-foreground">Re</span>
+      {evidence}
+      <span className="min-w-0 leading-tight">
+        <Link
+          href={contextHref(context.type, context.id)}
+          className="rounded-sm text-sm font-medium underline-offset-4 transition-colors outline-none hover:text-primary hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          {context.label}
+        </Link>
+        {!compact && (
+          <span className="block text-xs text-muted-foreground">
+            {CONTEXT_KIND[context.type]}
+          </span>
+        )}
+      </span>
+    </p>
+  );
+}
+
 export default async function ConnectionsPage() {
   const personaId = await requireCompanyId();
   // Signed out: this surface belongs to a company, so send the reader to the public page.
   if (personaId === null) redirect("/");
-  const [view, companies] = await Promise.all([
+  const [view, companies, products] = await Promise.all([
     getConnections(personaId),
     getCompanies(),
+    getProducts(),
   ]);
 
   const byId = new Map(companies.map((company) => [company.id, company]));
+  const productById = new Map(products.map((product) => [product.id, product]));
   const persona = byId.get(personaId);
   const personaName = persona?.name ?? personaId;
 
   const counterpartOf = (connection: Connection) =>
     connection.from_id === personaId ? connection.to_id : connection.from_id;
+
+  const objectOf = (connection: Connection) => ({
+    context: connection.context,
+    product:
+      connection.context?.type === "product"
+        ? productById.get(connection.context.id)
+        : undefined,
+    contextCompany:
+      connection.context?.type === "company"
+        ? byId.get(connection.context.id)
+        : undefined,
+  });
 
   const byDateDesc = (a: string, b: string) => (a < b ? 1 : a > b ? -1 : 0);
   const incoming = [...view.incoming].sort((a, b) => byDateDesc(a.created_at, b.created_at));
@@ -64,9 +133,10 @@ export default async function ConnectionsPage() {
           Connections
         </h1>
         <p className="max-w-[65ch] text-sm leading-relaxed text-muted-foreground">
-          The working register of {personaName}: requests to decide, requests awaiting an
-          answer, and the connected network. Accepting a request opens a conversation
-          carrying the note it was sent with — connected means you are already talking.
+          The working register of {personaName}: requests to decide, requests awaiting
+          an answer, and the connected network. Every request carries the record it
+          starts from — a company, an article, a notice — and accepting one opens a
+          conversation seeded with its note. Connected means you are already talking.
         </p>
         <p className="arena-data text-muted-foreground">
           {view.incoming.length} received · {view.outgoing.length} sent ·{" "}
@@ -104,9 +174,14 @@ export default async function ConnectionsPage() {
                         <p className="mt-0.5 text-[13px] text-muted-foreground">
                           {metaOf(company)}
                         </p>
-                        <p className="mt-2.5 max-w-[65ch] border-l border-border pl-3 text-sm leading-relaxed">
-                          {connection.message}
-                        </p>
+                        <div className="mt-3">
+                          <RequestObject {...objectOf(connection)} />
+                        </div>
+                        {connection.message && (
+                          <p className="mt-2.5 max-w-[65ch] border-l border-border pl-3 text-sm leading-relaxed">
+                            {connection.message}
+                          </p>
+                        )}
                         <div className="mt-3">
                           <RespondButtons
                             connectionId={connection.id}
@@ -150,9 +225,14 @@ export default async function ConnectionsPage() {
                         <p className="mt-0.5 text-[13px] text-muted-foreground">
                           {metaOf(company)}
                         </p>
-                        <p className="mt-2 line-clamp-2 max-w-[65ch] text-sm leading-relaxed text-muted-foreground">
-                          {connection.message}
-                        </p>
+                        <div className="mt-2.5">
+                          <RequestObject {...objectOf(connection)} />
+                        </div>
+                        {connection.message && (
+                          <p className="mt-2 line-clamp-2 max-w-[65ch] text-sm leading-relaxed text-muted-foreground">
+                            {connection.message}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </li>
@@ -178,18 +258,31 @@ export default async function ConnectionsPage() {
                 if (!company) return null;
                 return (
                   <li key={connection.id} className="border-b py-3.5">
-                    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3.5">
-                      <Monogram logo={company.logo} size={32} />
-                      <div className="flex min-w-0 flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
-                        <div className="min-w-0">
+                    <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3.5">
+                      <Monogram logo={company.logo} size={32} className="mt-0.5" />
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
                           <CompanyLink company={company} />
-                          <p className="mt-0.5 text-[13px] text-muted-foreground">
-                            {metaOf(company)}
-                          </p>
+                          <span className="arena-data text-muted-foreground">
+                            connected {connection.responded_at ?? connection.created_at}
+                          </span>
                         </div>
-                        <span className="arena-data text-muted-foreground">
-                          connected {connection.responded_at ?? connection.created_at}
-                        </span>
+                        <p className="mt-0.5 text-[13px] text-muted-foreground">
+                          {metaOf(company)}
+                        </p>
+                        {(connection.context || connection.conversation_id) && (
+                          <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+                            <RequestObject {...objectOf(connection)} compact />
+                            {connection.conversation_id && (
+                              <Link
+                                href={`/messages?thread=${connection.conversation_id}`}
+                                className="rounded-sm text-sm text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                              >
+                                Open the thread →
+                              </Link>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </li>
@@ -217,8 +310,8 @@ export default async function ConnectionsPage() {
             Suggested counterparties
           </h2>
           <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
-            Ranked by how well each company completes {personaName}&rsquo;s chain. Sending
-            a request carries a note and opens a thread once it is accepted.
+            Ranked by how well each company completes {personaName}&rsquo;s chain.
+            Connect opens a request that carries the company record and your note.
           </p>
           <ol className="mt-3 border-t border-foreground/25">
             {suggestions.map((company, index) => {
@@ -249,6 +342,7 @@ export default async function ConnectionsPage() {
                             id: company.id,
                             label: company.name,
                           }}
+                          objectLogo={company.logo}
                         />
                       </div>
                     </div>

@@ -2,80 +2,53 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { MessageComposer } from "@/components/arena/actions";
+import { CONTEXT_KIND, ContextGlyph, contextHref } from "@/components/arena/context-glyph";
+import { MaterialSwatch } from "@/components/arena/material-swatch";
 import { Monogram } from "@/components/arena/monogram";
 import { dayOf, timeOf } from "@/components/arena/registry";
-import { getCompanies, getConversations } from "@/lib/api";
+import { getCompanies, getConnections, getConversations, getProducts } from "@/lib/api";
 import { requireCompanyId } from "@/lib/persona.server";
 import { COMPANY_TYPE_LABELS } from "@/lib/types";
-import type { Company, ContextType, Conversation, Message } from "@/lib/types";
+import type { Company, Connection, Conversation, Message, Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 /* ------------------------------------------------------------------ */
 /* The context rail: every thread is anchored to the record that       */
-/* started it — company, product or notice — as a live link.            */
+/* started it — company, product or notice — as a live link. The       */
+/* record is drawn, not named: an article shows its material, a        */
+/* company its nameplate, a notice its posted sheet.                   */
 /* ------------------------------------------------------------------ */
 
-function contextHref(type: ContextType, id: string): string {
-  if (type === "company") return `/companies/${id}`;
-  if (type === "product") return `/products/${id}`;
-  return `/floor/${id}`;
-}
-
-const CONTEXT_KIND: Record<ContextType, string> = {
-  company: "Company record",
-  product: "Product record",
-  notice: "Notice on the floor",
-};
-
-/** Catalogue apparatus glyphs, one per context type, in the house line work. */
-function ContextGlyph({ type, size = 22 }: { type: ContextType; size?: number }) {
-  const stroke = {
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 1.5,
-    strokeLinejoin: "round" as const,
-  };
-  return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" className="shrink-0">
-      {type === "company" && (
-        // The foundry nameplate.
-        <g {...stroke}>
-          <rect x="2.5" y="7" width="19" height="10" rx="1" />
-          <rect x="4.5" y="9" width="15" height="6" strokeOpacity="0.5" strokeWidth="0.9" />
-          <path d="M8.5 12h7" />
-        </g>
-      )}
-      {type === "product" && (
-        // A DIN material swatch, hatched.
-        <g {...stroke}>
-          <rect x="3.5" y="3.5" width="17" height="17" rx="1" />
-          <g strokeWidth="1" strokeOpacity="0.75">
-            <path d="M3.5 9.5l6-6M3.5 15.5l12-12M3.5 20.5l17-17M9.5 20.5l11-11M15.5 20.5l5-5" />
-          </g>
-        </g>
-      )}
-      {type === "notice" && (
-        // A posted notice: head rule, then the brief's lines.
-        <g {...stroke}>
-          <rect x="4.5" y="3" width="15" height="18" rx="1" />
-          <path d="M7.5 7.5h9" />
-          <path strokeWidth="1" strokeOpacity="0.75" d="M7.5 11h9M7.5 14h9M7.5 17h5.5" />
-        </g>
-      )}
-    </svg>
-  );
-}
-
-function ContextPlate({ conversation }: { conversation: Conversation }) {
+function ContextPlate({
+  conversation,
+  product,
+  contextCompany,
+}: {
+  conversation: Conversation;
+  /** Resolved when the context is a product — carries the drawn swatch. */
+  product: Product | undefined;
+  /** Resolved when the context is a company — carries the nameplate. */
+  contextCompany: Company | undefined;
+}) {
   const { type, id, label } = conversation.context;
+  const evidence =
+    type === "product" && product ? (
+      <span className="h-12 w-16 shrink-0">
+        <MaterialSwatch visual={product.visual} />
+      </span>
+    ) : type === "company" && contextCompany ? (
+      <Monogram logo={contextCompany.logo} size={40} />
+    ) : (
+      <span className="mt-0.5 text-muted-foreground">
+        <ContextGlyph type={type} />
+      </span>
+    );
   return (
     <div className="rounded-md bg-card p-3.5 ring-1 ring-foreground/10">
-      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3">
-        <span className="mt-0.5 text-muted-foreground">
-          <ContextGlyph type={type} />
-        </span>
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3">
+        {evidence}
         <div className="min-w-0">
           <p className="arena-data text-muted-foreground">Filed under · {type}</p>
           <p className="mt-1 text-sm leading-snug">
@@ -155,12 +128,21 @@ export default async function MessagesPage({
 }) {
   const [personaId, params] = await Promise.all([requireCompanyId(), searchParams]);
   if (personaId === null) redirect("/");
-  const [conversations, companies] = await Promise.all([
+  const [conversations, companies, products, connectionsView] = await Promise.all([
     getConversations(personaId),
     getCompanies(),
+    getProducts(),
+    getConnections(personaId).catch(() => null),
   ]);
 
   const byId = new Map(companies.map((company) => [company.id, company]));
+  const productById = new Map(products.map((product) => [product.id, product]));
+  /* The request each thread was born from — accepted connections carry the id. */
+  const originByThread = new Map<string, Connection>(
+    (connectionsView?.accepted ?? [])
+      .filter((connection) => connection.conversation_id !== null)
+      .map((connection) => [connection.conversation_id as string, connection]),
+  );
   const persona = byId.get(personaId);
   const personaName = persona?.name ?? personaId;
   const personaLogo = persona?.logo ?? { monogram: personaId.slice(0, 2), tone: 0 };
@@ -285,6 +267,8 @@ export default async function MessagesPage({
                 active.participants[0];
               const counterpart = byId.get(counterpartId);
               const groups = groupByDay(active.messages);
+              const origin = originByThread.get(active.id);
+              const openedByMe = origin?.from_id === personaId;
               return (
                 <section
                   aria-label={`Correspondence with ${counterpart?.name ?? counterpartId}`}
@@ -323,10 +307,36 @@ export default async function MessagesPage({
                   </div>
 
                   <div className="mt-4">
-                    <ContextPlate conversation={active} />
+                    <ContextPlate
+                      conversation={active}
+                      product={
+                        active.context.type === "product"
+                          ? productById.get(active.context.id)
+                          : undefined
+                      }
+                      contextCompany={
+                        active.context.type === "company"
+                          ? byId.get(active.context.id)
+                          : undefined
+                      }
+                    />
                   </div>
 
                   <ol className="mt-6 border-t border-foreground/25">
+                    {/* How the file came to exist — legible even one entry in. */}
+                    {origin && (
+                      <li className="pt-4">
+                        <p className="max-w-[65ch] text-[13px] leading-relaxed text-muted-foreground">
+                          <span className="arena-data">
+                            File opened{origin.responded_at ? ` ${origin.responded_at}` : ""}
+                          </span>{" "}
+                          —{" "}
+                          {openedByMe
+                            ? `${counterpart?.name ?? counterpartId} accepted your connection request; your note leads the file.`
+                            : `you accepted ${counterpart?.name ?? counterpartId}'s connection request; their note leads the file.`}
+                        </p>
+                      </li>
+                    )}
                     {groups.map((group) => (
                       <li key={group.day}>
                         <p

@@ -53,28 +53,62 @@ visuels — logos d'entreprises, matières, sceaux de vérification — sont des
 
 ---
 
-## Les 10 pages
+## Les pages
 
 | Page | Route | Contenu |
 |---|---|---|
-| Accueil | `/` | Proposition de valeur, la chaîne de valeur en figure interactive, fournisseurs et produits mis en avant, opportunités, fonctionnement d'Arena |
+| **The Floor** | `/` (connecté) | Le fil : les notices des entreprises connectées, puis celles adressées à votre type d'entreprise. Compositeur de publication en tête |
+| Page publique | `/` (visiteur) | L'argumentaire : proposition de valeur, chaîne de valeur en figure interactive, besoins ouverts |
+| Notice | `/floor/[id]` | Une publication en permalien, avec son registre d'intérêts |
 | Annuaire | `/companies` | 16 entreprises, rail de position dans la chaîne, 6 filtres à compteurs vivants |
-| Profil d'entreprise | `/companies/[id]` | Informations générales, positionnement, capacités en fiche technique, produits, réseau |
+| Profil d'entreprise | `/companies/[id]` | Général, positionnement, capacités en fiche technique, produits, réseau, **demande de connexion** |
 | Catalogue | `/products` | 21 produits, planches matière dessinées, 5 filtres |
-| Fiche produit | `/products/[id]` | Spécifications, matières, procédés, applications, quantité minimale, délais, certifications |
+| Fiche produit | `/products/[id]` | Spécifications, matières, procédés, délais, certifications, **demande de connexion au sujet de cet article** |
 | **Traçabilité** | `/products/[id]/traceability` | La chaîne de fabrication étape par étape — pièce maîtresse du prototype |
-| Connexions | `/connections` | Connexions établies, demandes reçues et envoyées, suggestions |
-| Messagerie | `/messages` | Conversations ancrées à l'enregistrement qui les a ouvertes, rédaction et envoi |
-| Opportunités | `/opportunities` | Besoins fictifs publiés par des marques et des fournisseurs |
-| Tableau de suivi | `/pipeline` | Six statuts, de « à découvrir » à « partenaire actif » |
+| Connexions | `/connections` | Demandes reçues et envoyées avec leur objet, réseau connecté, suggestions |
+| Messagerie | `/messages` | Conversations ancrées à l'enregistrement qui les a ouvertes |
 
-### Entreprise simulée
+### Le fil et les notices
 
-Il n'y a **pas d'authentification**. Le contrôle « Viewing as » dans l'en-tête choisit l'entreprise du
-point de vue de laquelle on navigue. Trois entreprises sont disponibles : *Maison Vaudoise* (marque
-textile suisse, par défaut), *Atelier Romand Construction* (entreprise de construction) et
-*Confecções Douro* (fabricant portugais). Ce choix change ce qu'affichent Connexions, Messagerie et
-Tableau de suivi.
+Une **notice** est une publication. Deux genres :
+
+- **need** — un besoin : ce qu'une entreprise cherche. Porte une région, des compétences attendues, une échéance.
+- **offer** — un produit qu'une entreprise met en avant, avec sa planche matière.
+
+Chaque notice déclare **à qui elle s'adresse** parmi les cinq types d'entreprise (marque, fournisseur,
+fabricant, transformateur, producteur de matières premières). Une liste vide signifie « ouvert à
+tous ». C'est ce qu'aucun réseau généraliste ne fait, et la raison d'être d'un fil sectoriel : le
+lecteur voit immédiatement si une publication lui parle.
+
+Le fil se lit en deux registres : d'abord les notices des entreprises connectées, puis un « For you »
+classé par un score explicable — adressage, secteur, position en amont dans la chaîne, matières
+partagées. La raison de la remontée est imprimée sur chaque notice.
+
+**Publier** : depuis le compositeur en tête du fil, soit un besoin rédigé, soit un produit de son
+propre catalogue. Les marques ne possèdent aucun produit dans ce jeu de données — c'est la dynamique
+réelle du secteur, et le compositeur le dit franchement plutôt que de masquer le mode.
+
+### Se connecter
+
+Une demande de connexion part de trois endroits et **porte toujours son objet** :
+
+- depuis un **profil d'entreprise** ;
+- depuis une **fiche produit** — « je veux vous parler de cet article précis » ;
+- depuis une **notice** du fil.
+
+**Accepter ouvre une conversation**, amorcée par la note de la demande et portant le même objet. Être
+connecté, ici, veut dire qu'on se parle déjà.
+
+### Entreprise simulée et mode visiteur
+
+Il n'y a **pas d'authentification**. Le contrôle en haut à droite choisit l'entreprise du point de vue
+de laquelle on navigue : *Maison Vaudoise* (marque textile suisse, par défaut), *Atelier Romand
+Construction* ou *Confecções Douro* (fabricant portugais). Ce choix change le fil, les connexions et
+la messagerie.
+
+Le même contrôle permet de **se déconnecter**. En visiteur, `/` affiche la page publique, l'annuaire
+et le catalogue restent consultables, et les surfaces réservées aux membres renvoient à l'accueil.
+C'est ce qui permet de démontrer les deux faces du produit sans construire d'authentification.
 
 ### Traçabilité
 
@@ -96,17 +130,18 @@ Produits avec chaîne publiée : `heavyweight-tshirt-cmt`, `natural-dye-linen`,
 
 ## Parcours de démonstration
 
-1. Arriver sur l'accueil et parcourir la chaîne de valeur.
-2. Ouvrir l'annuaire.
-3. Filtrer par secteur et par pays — les résultats changent réellement.
-4. Ouvrir le profil d'un fournisseur.
-5. Consulter ses capacités et ses produits.
-6. Ouvrir une fiche produit.
-7. Ouvrir sa chaîne de traçabilité et la parcourir.
-8. Envoyer une demande de connexion depuis les suggestions de `/connections`.
-9. Ouvrir la messagerie.
-10. Envoyer un message fictif — il apparaît immédiatement.
-11. Faire changer une relation de statut dans le tableau de suivi.
+1. Se déconnecter depuis l'en-tête : `/` devient la page publique, l'argumentaire.
+2. Se reconnecter comme *Maison Vaudoise* : `/` devient le fil.
+3. Parcourir les deux registres — les connexions d'abord, le « For you » ensuite, chaque notice
+   indiquant à qui elle s'adresse et pourquoi elle est remontée.
+4. Publier un besoin adressé aux fabricants et transformateurs — il apparaît en tête du fil.
+5. Depuis une notice, demander une connexion à son auteur.
+6. Ouvrir l'annuaire, filtrer par secteur et par pays, ouvrir un profil, demander une connexion.
+7. Ouvrir une fiche produit, demander une connexion au sujet de cet article.
+8. Ouvrir sa chaîne de traçabilité et la parcourir.
+9. Basculer sur l'entreprise destinataire, accepter la demande dans `/connections`.
+10. Vérifier dans `/messages` qu'une conversation s'est ouverte, portant l'objet et la note d'origine.
+11. Répondre — le message apparaît immédiatement.
 
 > Les actions conséquentes (accepter, refuser, se connecter, manifester son intérêt) s'inscrivent
 > immédiatement mais laissent **cinq secondes d'annulation** avant d'être validées. En démonstration,
@@ -126,8 +161,8 @@ Produits avec chaîne publiée : `heavyweight-tshirt-cmt`, `natural-dye-linen`,
 ```
 backend/app/        main.py · models.py · store.py · routers/
 backend/data/       companies · products · traceability · connections ·
-                    conversations · opportunities · relationships  (.json)
-frontend/src/app/   les 10 surfaces
+                    conversations · notices  (.json)
+frontend/src/app/   les surfaces
 frontend/src/components/ui/       primitives shadcn
 frontend/src/components/arena/    composants métier et système visuel SVG
 frontend/src/lib/   api.ts · types.ts · persona.ts
@@ -139,14 +174,14 @@ modèle de données que le produit réel devra reprendre.
 ### API
 
 ```
-GET    /health                          GET    /filters          GET  /personas
-GET    /companies                       GET    /companies/{id}
-GET    /products                        GET    /products/{id}
-GET    /products/{id}/traceability
-GET    /opportunities                   POST   /opportunities/{id}/interest
-GET    /connections                     POST   /connections      PATCH /connections/{id}
-GET    /messages                        GET    /messages/{id}    POST  /messages
-GET    /relationships                   POST   /relationships    PATCH /relationships/{id}
+GET    /health            GET  /filters              GET  /personas
+GET    /feed              ?as=<company_id>           → { from_connections, for_you }
+GET    /notices           GET  /notices/{id}         POST /notices
+POST   /notices/{id}/interest
+GET    /companies         GET  /companies/{id}
+GET    /products          GET  /products/{id}        GET  /products/{id}/traceability
+GET    /connections       POST /connections          PATCH /connections/{id}
+GET    /messages          GET  /messages/{id}        POST /messages
 ```
 
 Les lectures côté serveur passent par le réseau Docker (`backend:8000`), les appels du navigateur par
@@ -155,8 +190,8 @@ l'onglet réseau.
 
 ### Volume de données fictives
 
-16 entreprises · 21 produits · 4 chaînes de traçabilité complètes · 12 connexions ·
-5 conversations · 6 opportunités · 14 relations de suivi.
+16 entreprises · 21 produits · 4 chaînes de traçabilité complètes · 15 notices (6 besoins,
+9 offres) · 12 connexions · 5 conversations.
 
 ---
 
@@ -168,11 +203,12 @@ inscription · authentification · mots de passe · rôles et permissions · bas
 messagerie réelle · notifications · paiements · abonnements · hébergement de production ·
 stockage sécurisé de documents · conformité nLPD/RGPD · système de vérification réel ·
 connexion à un CRM · intégration LinkedIn · recommandation par intelligence artificielle ·
-devis et commandes · tests de charge · garantie de sécurité · architecture scalable.
+devis et commandes · tests de charge · garantie de sécurité · architecture scalable ·
+tableau de suivi des relations (retiré en v2 au profit du modèle réseau).
 
-**Aucune persistance.** Les connexions, messages, marques d'intérêt et changements de statut
-modifient l'état du processus backend et **disparaissent au redémarrage des conteneurs**. C'est le
-comportement attendu : il n'y a pas de base de données.
+**Aucune persistance.** Les notices publiées, connexions, conversations, messages et marques
+d'intérêt modifient l'état du processus backend et **disparaissent au redémarrage des conteneurs**.
+C'est le comportement attendu : il n'y a pas de base de données.
 
 **Les données de vérification sont fictives.** Les statuts *declared / confirmed / verified* illustrent
 un mécanisme ; ils ne reposent sur aucun audit.

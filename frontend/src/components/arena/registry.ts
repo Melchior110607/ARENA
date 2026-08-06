@@ -1,8 +1,7 @@
 /**
- * Server-safe helpers shared by the four registry surfaces — Connections,
- * Messages, Opportunities and Pipeline. Dates in the registry are always set
- * as ISO days in Fragment Mono: the register quotes the record, it does not
- * prettify it.
+ * Server-safe helpers shared by the registry surfaces — the Floor, Connections
+ * and Messages. Dates in the registry are always set as ISO days in Fragment
+ * Mono: the register quotes the record, it does not prettify it.
  */
 
 export const pad2 = (n: number) => String(n).padStart(2, "0");
