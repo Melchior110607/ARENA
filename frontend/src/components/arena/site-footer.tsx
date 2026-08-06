@@ -7,12 +7,11 @@ import Link from "next/link";
  */
 
 const INDEX = [
+  { href: "/", label: "Floor" },
   { href: "/companies", label: "Companies" },
   { href: "/products", label: "Products" },
-  { href: "/opportunities", label: "Opportunities" },
   { href: "/connections", label: "Connections" },
   { href: "/messages", label: "Messages" },
-  { href: "/pipeline", label: "Pipeline" },
 ] as const;
 
 export function SiteFooter() {
@@ -52,7 +51,7 @@ export function SiteFooter() {
           <h2 className="arena-data mb-3 text-plate-muted/80">About the data</h2>
           <p className="max-w-sm text-sm leading-relaxed">
             Arena is a demonstration prototype. Every company, product,
-            traceability chain, message and opportunity is fictional; no real
+            traceability chain, message and notice is fictional; no real
             company is represented. Data lives in memory and resets on
             restart.
           </p>

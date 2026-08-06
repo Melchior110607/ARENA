@@ -15,15 +15,16 @@ import type {
   Company,
   CompanyDetail,
   Connection,
+  ConnectionContext,
   ConnectionsView,
   Conversation,
   Facets,
+  Feed,
   Message,
-  Opportunity,
+  Notice,
+  NoticeDraft,
   Product,
   ProductDetail,
-  Relationship,
-  RelationshipStatus,
   TraceabilityChain,
 } from "./types";
 
@@ -116,8 +117,17 @@ export const getProduct = (id: string) => request<ProductDetail>(`/products/${id
 export const getTraceability = (productId: string) =>
   request<TraceabilityChain>(`/products/${productId}/traceability`);
 
-export const getOpportunities = (query?: { sector?: string; region?: string }) =>
-  request<Opportunity[]>(withQuery("/opportunities", query));
+/** The floor, seen from one company: connections first, then what addresses them. */
+export const getFeed = (as: string) => request<Feed>(withQuery("/feed", { as }));
+
+export const getNotices = (query?: {
+  kind?: string;
+  sector?: string;
+  addressed_to?: string;
+  author?: string;
+}) => request<Notice[]>(withQuery("/notices", query));
+
+export const getNotice = (id: string) => request<Notice>(`/notices/${id}`);
 
 export const getConnections = (as: string) =>
   request<ConnectionsView>(withQuery("/connections", { as }));
@@ -127,9 +137,6 @@ export const getConversations = (as: string) =>
 
 export const getConversation = (id: string) => request<Conversation>(`/messages/${id}`);
 
-export const getRelationships = (as: string) =>
-  request<Relationship[]>(withQuery("/relationships", { as }));
-
 export const getFacets = () => request<Facets>("/filters");
 
 export const getPersonas = () => request<Company[]>("/personas");
@@ -138,9 +145,18 @@ export const getPersonas = () => request<Company[]>("/personas");
 /* These change in-memory state on the backend. Nothing persists a restart,
    and nothing reaches a real company. */
 
-export const createConnection = (body: { from_id: string; to_id: string; message?: string }) =>
-  request<Connection>("/connections", { method: "POST", body: JSON.stringify(body) });
+/**
+ * Open a connection request. `context` records what it is about — a company, a
+ * product, or a notice — and travels into the conversation the request opens.
+ */
+export const createConnection = (body: {
+  from_id: string;
+  to_id: string;
+  message?: string;
+  context?: ConnectionContext | null;
+}) => request<Connection>("/connections", { method: "POST", body: JSON.stringify(body) });
 
+/** Accepting opens a conversation, seeded with the request's own note. */
 export const respondToConnection = (id: string, status: "accepted" | "declined") =>
   request<Connection>(`/connections/${id}`, {
     method: "PATCH",
@@ -150,18 +166,8 @@ export const respondToConnection = (id: string, status: "accepted" | "declined")
 export const sendMessage = (body: { conversation_id: string; from_id: string; body: string }) =>
   request<Message>("/messages", { method: "POST", body: JSON.stringify(body) });
 
-export const expressInterest = (opportunityId: string) =>
-  request<Opportunity>(`/opportunities/${opportunityId}/interest`, { method: "POST" });
+export const postNotice = (draft: NoticeDraft) =>
+  request<Notice>("/notices", { method: "POST", body: JSON.stringify(draft) });
 
-export const trackRelationship = (body: {
-  owner_id: string;
-  company_id: string;
-  status?: RelationshipStatus;
-  note?: string;
-}) => request<Relationship>("/relationships", { method: "POST", body: JSON.stringify(body) });
-
-export const moveRelationship = (id: string, status: RelationshipStatus) =>
-  request<Relationship>(`/relationships/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify({ status }),
-  });
+export const expressInterest = (noticeId: string, as: string) =>
+  request<Notice>(withQuery(`/notices/${noticeId}/interest`, { as }), { method: "POST" });

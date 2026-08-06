@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * The index row of the masthead: Arena's seven surfaces, read like the
- * section index of a works catalogue. The active surface carries a vermilion
- * signal underline plus full-strength text — never colour alone.
+ * The index row of the masthead, read like the section index of a works
+ * catalogue. The active surface carries a vermilion signal underline plus
+ * full-strength text — never colour alone.
  */
 
 import Link from "next/link";
@@ -12,13 +12,11 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/", label: "Home" },
+  { href: "/", label: "Floor" },
   { href: "/companies", label: "Companies" },
   { href: "/products", label: "Products" },
-  { href: "/opportunities", label: "Opportunities" },
   { href: "/connections", label: "Connections" },
   { href: "/messages", label: "Messages" },
-  { href: "/pipeline", label: "Pipeline" },
 ] as const;
 
 export function MainNav() {

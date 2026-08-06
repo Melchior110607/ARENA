@@ -1,11 +1,10 @@
-from . import companies, connections, messages, meta, opportunities, products, relationships
+from . import companies, connections, messages, meta, notices, products
 
 __all__ = [
     "companies",
     "connections",
     "messages",
     "meta",
-    "opportunities",
+    "notices",
     "products",
-    "relationships",
 ]

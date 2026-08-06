@@ -10,19 +10,15 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import (
-    companies,
-    connections,
-    messages,
-    meta,
-    opportunities,
-    products,
-    relationships,
-)
+from .routers import companies, connections, messages, meta, notices, products
 
 DESCRIPTION = """
 B2B network prototype connecting brands, suppliers, manufacturers, processors and raw
 material producers across textile and construction.
+
+Companies publish what they can actually make, post notices on the floor — a need or an
+offer, addressed to specific company types — and connect from anywhere: a profile, a
+product, or a notice. Accepting a connection opens the conversation.
 
 **All data is fictional.** No database, no authentication, no persistence: mutations
 live in the process and are lost on restart.
@@ -52,11 +48,10 @@ app.add_middleware(
 
 for router in (
     meta.router,
+    notices.router,
     companies.router,
     products.router,
-    opportunities.router,
     connections.router,
     messages.router,
-    relationships.router,
 ):
     app.include_router(router)

@@ -34,16 +34,10 @@ ConnectionStatus = Literal["pending", "accepted", "declined"]
 
 TraceabilityStatus = Literal["declared", "confirmed", "verified"]
 
-RelationshipStatus = Literal[
-    "to_discover",
-    "contacted",
-    "connected",
-    "in_discussion",
-    "evaluation",
-    "active_partner",
-]
+NoticeKind = Literal["need", "offer"]
 
-ContextType = Literal["company", "product", "opportunity"]
+# What a conversation or a connection request refers to.
+ContextType = Literal["company", "product", "notice"]
 
 
 class Visual(BaseModel):
@@ -158,6 +152,19 @@ class TraceabilityChain(BaseModel):
     steps: list[TraceabilityStep]
 
 
+class ConnectionContext(BaseModel):
+    """What a connection request is about.
+
+    A request always starts from something — a company found in the directory, a
+    specific product in the catalogue, or a notice on the floor. The context
+    travels with the request and into the conversation it opens.
+    """
+
+    type: ContextType
+    id: str
+    label: str
+
+
 class Connection(BaseModel):
     id: str
     from_id: str
@@ -166,6 +173,9 @@ class Connection(BaseModel):
     created_at: str
     responded_at: str | None = None
     message: str
+    context: ConnectionContext | None = None
+    # Set when the request is accepted — the conversation it opened.
+    conversation_id: str | None = None
 
 
 class ConnectionsView(BaseModel):
@@ -181,6 +191,7 @@ class ConnectionCreate(BaseModel):
     from_id: str
     to_id: str
     message: str = ""
+    context: ConnectionContext | None = None
 
 
 class ConnectionUpdate(BaseModel):
@@ -213,38 +224,55 @@ class MessageCreate(BaseModel):
     body: str
 
 
-class Opportunity(BaseModel):
+class Notice(BaseModel):
+    """A post on the floor.
+
+    Two kinds: a `need` (a brief — what a company is looking for) or an `offer`
+    (a product a company puts forward). Both declare `addressed_to`: which of the
+    five company types the notice is speaking to. That targeting is what makes a
+    sector feed worth reading — a reader sees immediately whether a post is
+    aimed at them.
+    """
+
     id: str
+    author_id: str
+    kind: NoticeKind
     title: str
-    company_id: str
-    sector: Sector
-    region: str
-    description: str
-    skills: list[str]
+    body: str
+    addressed_to: list[CompanyType]
+    sector: Sector | None = None
+    # Needs only.
+    region: str | None = None
+    skills: list[str] = Field(default_factory=list)
+    deadline: str | None = None
+    # Offers only — a product belonging to the author.
+    product_id: str | None = None
     posted_at: str
-    deadline: str
-    interested: bool = False
+    interested_by: list[str] = Field(default_factory=list)
 
 
-class Relationship(BaseModel):
-    id: str
-    owner_id: str
-    company_id: str
-    status: RelationshipStatus
-    status_since: str
-    first_seen: str
-    note: str
+class NoticeCreate(BaseModel):
+    author_id: str
+    kind: NoticeKind
+    title: str
+    body: str = ""
+    addressed_to: list[CompanyType] = Field(default_factory=list)
+    sector: Sector | None = None
+    region: str | None = None
+    skills: list[str] = Field(default_factory=list)
+    deadline: str | None = None
+    product_id: str | None = None
 
 
-class RelationshipUpdate(BaseModel):
-    status: RelationshipStatus
+class Feed(BaseModel):
+    """The floor, seen from one company.
 
+    Notices from accepted connections come first — that is what a network is for.
+    Everything else is ranked by how well it addresses the reader.
+    """
 
-class RelationshipCreate(BaseModel):
-    owner_id: str
-    company_id: str
-    status: RelationshipStatus = "to_discover"
-    note: str = ""
+    from_connections: list[Notice]
+    for_you: list[Notice]
 
 
 class FacetValue(BaseModel):

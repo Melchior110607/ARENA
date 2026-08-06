@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { MessageComposer } from "@/components/arena/actions";
 import { Monogram } from "@/components/arena/monogram";
 import { dayOf, timeOf } from "@/components/arena/registry";
 import { getCompanies, getConversations } from "@/lib/api";
-import { getPersonaId } from "@/lib/persona.server";
+import { requireCompanyId } from "@/lib/persona.server";
 import { COMPANY_TYPE_LABELS } from "@/lib/types";
 import type { Company, ContextType, Conversation, Message } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -13,19 +14,19 @@ export const dynamic = "force-dynamic";
 
 /* ------------------------------------------------------------------ */
 /* The context rail: every thread is anchored to the record that       */
-/* started it — company, product or opportunity — as a live link.      */
+/* started it — company, product or notice — as a live link.            */
 /* ------------------------------------------------------------------ */
 
 function contextHref(type: ContextType, id: string): string {
   if (type === "company") return `/companies/${id}`;
   if (type === "product") return `/products/${id}`;
-  return "/opportunities";
+  return `/floor/${id}`;
 }
 
 const CONTEXT_KIND: Record<ContextType, string> = {
   company: "Company record",
   product: "Product record",
-  opportunity: "Opportunity board",
+  notice: "Notice on the floor",
 };
 
 /** Catalogue apparatus glyphs, one per context type, in the house line work. */
@@ -55,7 +56,7 @@ function ContextGlyph({ type, size = 22 }: { type: ContextType; size?: number })
           </g>
         </g>
       )}
-      {type === "opportunity" && (
+      {type === "notice" && (
         // A posted notice: head rule, then the brief's lines.
         <g {...stroke}>
           <rect x="4.5" y="3" width="15" height="18" rx="1" />
@@ -152,7 +153,8 @@ export default async function MessagesPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const [personaId, params] = await Promise.all([getPersonaId(), searchParams]);
+  const [personaId, params] = await Promise.all([requireCompanyId(), searchParams]);
+  if (personaId === null) redirect("/");
   const [conversations, companies] = await Promise.all([
     getConversations(personaId),
     getCompanies(),
@@ -183,7 +185,7 @@ export default async function MessagesPage({
         <p className="max-w-[65ch] text-sm leading-relaxed text-muted-foreground">
           Correspondence between {personaName} and its counterparties. Every thread is
           filed under the record that started it — a company, a product, or an open
-          opportunity.
+          notice.
         </p>
       </header>
 
@@ -191,7 +193,7 @@ export default async function MessagesPage({
         <div className="max-w-xl rounded-md bg-card p-5 ring-1 ring-foreground/10">
           <p className="text-base font-medium">No correspondence on file.</p>
           <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-            Conversations open from a company, product or opportunity record. Switch the
+            Conversations open from a company, product or notice. Switch the
             company you are viewing as (top right) to read another desk&rsquo;s files, or
             start from the{" "}
             <Link

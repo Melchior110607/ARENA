@@ -36,7 +36,7 @@ import {
   SECTOR_LABELS,
   type ChainPosition,
   type Company,
-  type Opportunity,
+  type Notice,
   type Product,
   type Sector,
   type TraceabilityChain,
@@ -59,12 +59,12 @@ const formatDate = (iso: string) => DATE_FORMAT.format(new Date(`${iso}T00:00:00
 export function HomeFolio({
   companies,
   products,
-  opportunities,
+  notices,
   specimens,
 }: {
   companies: Company[];
   products: Product[];
-  opportunities: Opportunity[];
+  notices: Notice[];
   specimens: Record<Sector, Specimen | null>;
 }) {
   const [sector, setSector] = useState<Sector>("textile");
@@ -108,7 +108,7 @@ export function HomeFolio({
       .slice(0, 6);
   }, [products, sector]);
 
-  const sectorOpportunities = opportunities.filter((o) => o.sector === sector);
+  const sectorNotices = notices.filter((n) => n.sector === sector);
   const specimen = specimens[sector];
 
   return (
@@ -383,15 +383,15 @@ export function HomeFolio({
             Open opportunities
           </h2>
           <Link
-            href="/opportunities"
+            href="/"
             className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
           >
-            All {opportunities.length} briefs →
+            All {notices.length} briefs →
           </Link>
         </div>
         <ul className="mt-4">
-          {sectorOpportunities.map((opportunity) => {
-            const poster = byId.get(opportunity.company_id);
+          {sectorNotices.map((opportunity) => {
+            const poster = byId.get(opportunity.author_id);
             return (
               <li
                 key={opportunity.id}
@@ -399,16 +399,16 @@ export function HomeFolio({
               >
                 <div className="min-w-0">
                   <Link
-                    href="/opportunities"
+                    href="/"
                     className="font-medium underline-offset-4 transition-colors hover:text-primary hover:underline"
                   >
                     {opportunity.title}
                   </Link>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    {poster?.name ?? "—"} · {opportunity.region}
+                    {poster?.name ?? "—"} · {opportunity.region ?? "Any region"}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {opportunity.skills.slice(0, 3).map((skill) => (
+                    {opportunity.skills.slice(0, 3).map((skill: string) => (
                       <Badge key={skill} variant="outline">
                         {skill}
                       </Badge>
@@ -419,7 +419,7 @@ export function HomeFolio({
                   </div>
                 </div>
                 <p className="arena-data text-muted-foreground sm:pt-1 sm:text-right">
-                  Closes {formatDate(opportunity.deadline)}
+                  Closes {opportunity.deadline ? formatDate(opportunity.deadline) : "—"}
                 </p>
               </li>
             );
@@ -427,7 +427,7 @@ export function HomeFolio({
         </ul>
         <div className="mt-6">
           <Button asChild variant="outline">
-            <Link href="/opportunities">Browse all briefs</Link>
+            <Link href="/">Browse all briefs</Link>
           </Button>
         </div>
       </section>

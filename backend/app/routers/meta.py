@@ -14,6 +14,7 @@ def health() -> dict[str, object]:
         "companies": len(store.companies),
         "products": len(store.products),
         "traceability_chains": len(store.chains),
+        "notices": len(store.notices),
     }
 
 

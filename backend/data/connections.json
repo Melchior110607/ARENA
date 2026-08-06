@@ -6,7 +6,13 @@
     "status": "accepted",
     "created_at": "2025-10-14",
     "responded_at": "2025-10-16",
-    "message": "We are moving our jersey programme to single-origin yarn and would like to talk about lot separation."
+    "message": "We are moving our jersey programme to single-origin yarn and would like to talk about lot separation.",
+    "context": {
+      "type": "product",
+      "id": "organic-cotton-yarn-ne30",
+      "label": "Ring-Spun Organic Cotton Ne 30"
+    },
+    "conversation_id": "conv-01"
   },
   {
     "id": "conn-02",
@@ -15,7 +21,13 @@
     "status": "accepted",
     "created_at": "2025-09-02",
     "responded_at": "2025-09-04",
-    "message": "Looking for a factory that will take 150-piece development runs alongside our core programme."
+    "message": "Looking for a factory that will take 150-piece development runs alongside our core programme.",
+    "context": {
+      "type": "product",
+      "id": "heavyweight-tshirt-cmt",
+      "label": "Heavyweight T-Shirt, Cut-Make-Trim"
+    },
+    "conversation_id": "conv-02"
   },
   {
     "id": "conn-03",
@@ -24,7 +36,13 @@
     "status": "accepted",
     "created_at": "2026-03-30",
     "responded_at": "2026-04-02",
-    "message": "We saw your published chain and think our closed-loop line fits your water commitments."
+    "message": "We saw your published chain and think our closed-loop line fits your water commitments.",
+    "context": {
+      "type": "company",
+      "id": "maison-vaudoise",
+      "label": "Maison Vaudoise"
+    },
+    "conversation_id": "conv-03"
   },
   {
     "id": "conn-04",
@@ -33,7 +51,13 @@
     "status": "accepted",
     "created_at": "2026-06-08",
     "responded_at": "2026-06-11",
-    "message": "Interested in colour-sorted recycled cotton for an undyed heather programme."
+    "message": "Interested in colour-sorted recycled cotton for an undyed heather programme.",
+    "context": {
+      "type": "product",
+      "id": "recycled-cotton-fibre-sorted",
+      "label": "Colour-Sorted Recycled Cotton"
+    },
+    "conversation_id": null
   },
   {
     "id": "conn-05",
@@ -42,7 +66,13 @@
     "status": "pending",
     "created_at": "2026-07-22",
     "responded_at": null,
-    "message": "Filatura Brescia mentioned your jersey project. We knit their Ne 30 regularly and have capacity from October."
+    "message": "Filatura Brescia mentioned your jersey project. We knit their Ne 30 regularly and have capacity from October.",
+    "context": {
+      "type": "product",
+      "id": "single-jersey-180",
+      "label": "Single Jersey 180 g/m²"
+    },
+    "conversation_id": null
   },
   {
     "id": "conn-06",
@@ -51,7 +81,13 @@
     "status": "pending",
     "created_at": "2026-07-18",
     "responded_at": null,
-    "message": "We supply Responsible Wool Standard tops with full lot documentation — relevant if you add knitwear."
+    "message": "We supply Responsible Wool Standard tops with full lot documentation — relevant if you add knitwear.",
+    "context": {
+      "type": "company",
+      "id": "maison-vaudoise",
+      "label": "Maison Vaudoise"
+    },
+    "conversation_id": null
   },
   {
     "id": "conn-07",
@@ -60,7 +96,13 @@
     "status": "pending",
     "created_at": "2026-07-30",
     "responded_at": null,
-    "message": "We are scoping a linen capsule for 2027 and want to understand your fibre grading before we approach spinners."
+    "message": "We are scoping a linen capsule for 2027 and want to understand your fibre grading before we approach spinners.",
+    "context": {
+      "type": "company",
+      "id": "lino-baltico",
+      "label": "Lino Baltico"
+    },
+    "conversation_id": null
   },
   {
     "id": "conn-08",
@@ -69,7 +111,13 @@
     "status": "accepted",
     "created_at": "2024-02-28",
     "responded_at": "2024-03-04",
-    "message": "We need parcel-level identifiers for our material passports. Can you supply them as standard?"
+    "message": "We need parcel-level identifiers for our material passports. Can you supply them as standard?",
+    "context": {
+      "type": "product",
+      "id": "glulam-beam-spruce",
+      "label": "Glulam Beam, Emmental Spruce"
+    },
+    "conversation_id": "conv-04"
   },
   {
     "id": "conn-09",
@@ -78,7 +126,13 @@
     "status": "accepted",
     "created_at": "2025-02-11",
     "responded_at": "2025-02-14",
-    "message": "Specifying recycled aggregate on a Fribourg project. Need declared content per batch, not per line."
+    "message": "Specifying recycled aggregate on a Fribourg project. Need declared content per batch, not per line.",
+    "context": {
+      "type": "notice",
+      "id": "notice-02",
+      "label": "Recycled concrete supplier for a Fribourg school project"
+    },
+    "conversation_id": "conv-05"
   },
   {
     "id": "conn-10",
@@ -87,7 +141,13 @@
     "status": "accepted",
     "created_at": "2026-05-05",
     "responded_at": "2026-05-12",
-    "message": "Our flax batts are certified under natureplus and should suit your timber frame details."
+    "message": "Our flax batts are certified under natureplus and should suit your timber frame details.",
+    "context": {
+      "type": "product",
+      "id": "flax-insulation-batt",
+      "label": "Flax Tow Insulation Batt"
+    },
+    "conversation_id": null
   },
   {
     "id": "conn-11",
@@ -96,7 +156,13 @@
     "status": "pending",
     "created_at": "2026-07-15",
     "responded_at": null,
-    "message": "We publish EPDs for the full profile catalogue and can supply melt certificates per coil."
+    "message": "We publish EPDs for the full profile catalogue and can supply melt certificates per coil.",
+    "context": {
+      "type": "product",
+      "id": "facade-substructure-steel",
+      "label": "Recycled Steel Facade Substructure"
+    },
+    "conversation_id": null
   },
   {
     "id": "conn-12",
@@ -105,6 +171,12 @@
     "status": "pending",
     "created_at": "2026-07-28",
     "responded_at": null,
-    "message": "The demountable spacer system is exactly what our disassembly plans need. Can we review a sample unit?"
+    "message": "The demountable spacer system is exactly what our disassembly plans need. Can we review a sample unit?",
+    "context": {
+      "type": "product",
+      "id": "triple-glazed-demountable",
+      "label": "Demountable Triple Glazed Unit"
+    },
+    "conversation_id": null
   }
 ]

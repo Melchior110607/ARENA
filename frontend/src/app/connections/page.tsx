@@ -1,36 +1,16 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { ConnectButton, RespondButtons } from "@/components/arena/actions";
-import type { PipelineConsequence } from "@/components/arena/actions";
 import { ChainLocator } from "@/components/arena/chain-locator";
 import { Monogram } from "@/components/arena/monogram";
 import { pad2 } from "@/components/arena/registry";
-import { getCompanies, getConnections, getRelationships } from "@/lib/api";
-import { getPersonaId } from "@/lib/persona.server";
-import {
-  CHAIN_POSITION_LABELS,
-  COMPANY_TYPE_LABELS,
-  RELATIONSHIP_STATUS_LABELS,
-  RELATIONSHIP_STATUS_ORDER,
-} from "@/lib/types";
-import type { Company, Connection, Relationship, RelationshipStatus } from "@/lib/types";
+import { getCompanies, getConnections } from "@/lib/api";
+import { requireCompanyId } from "@/lib/persona.server";
+import { CHAIN_POSITION_LABELS, COMPANY_TYPE_LABELS } from "@/lib/types";
+import type { Company, Connection } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-
-/** What accepting or connecting will really do to the pipeline record. */
-function consequenceOf(
-  relationship: Relationship | undefined,
-  reaches: RelationshipStatus,
-): PipelineConsequence {
-  if (
-    relationship &&
-    RELATIONSHIP_STATUS_ORDER.indexOf(relationship.status) >=
-      RELATIONSHIP_STATUS_ORDER.indexOf(reaches)
-  ) {
-    return { kind: "holds", statusLabel: RELATIONSHIP_STATUS_LABELS[relationship.status] };
-  }
-  return { kind: "advances", statusLabel: RELATIONSHIP_STATUS_LABELS[reaches] };
-}
 
 function metaOf(company: Company): string {
   return `${COMPANY_TYPE_LABELS[company.type]} · ${CHAIN_POSITION_LABELS[company.chain_position]} · ${company.country_name}`;
@@ -52,15 +32,15 @@ function EmptyLine({ children }: { children: React.ReactNode }) {
 }
 
 export default async function ConnectionsPage() {
-  const personaId = await getPersonaId();
-  const [view, companies, relationships] = await Promise.all([
+  const personaId = await requireCompanyId();
+  // Signed out: this surface belongs to a company, so send the reader to the public page.
+  if (personaId === null) redirect("/");
+  const [view, companies] = await Promise.all([
     getConnections(personaId),
     getCompanies(),
-    getRelationships(personaId),
   ]);
 
   const byId = new Map(companies.map((company) => [company.id, company]));
-  const relationOf = new Map(relationships.map((r) => [r.company_id, r]));
   const persona = byId.get(personaId);
   const personaName = persona?.name ?? personaId;
 
@@ -85,9 +65,8 @@ export default async function ConnectionsPage() {
         </h1>
         <p className="max-w-[65ch] text-sm leading-relaxed text-muted-foreground">
           The working register of {personaName}: requests to decide, requests awaiting an
-          answer, and the connected network. Accepting a request also files the
-          counterparty in the pipeline at Connected — the register and the pipeline move
-          together.
+          answer, and the connected network. Accepting a request opens a conversation
+          carrying the note it was sent with — connected means you are already talking.
         </p>
         <p className="arena-data text-muted-foreground">
           {view.incoming.length} received · {view.outgoing.length} sent ·{" "}
@@ -111,7 +90,6 @@ export default async function ConnectionsPage() {
               {incoming.map((connection) => {
                 const company = byId.get(counterpartOf(connection));
                 if (!company) return null;
-                const relationship = relationOf.get(company.id);
                 return (
                   <li key={connection.id} className="border-b py-5">
                     <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3.5">
@@ -129,16 +107,10 @@ export default async function ConnectionsPage() {
                         <p className="mt-2.5 max-w-[65ch] border-l border-border pl-3 text-sm leading-relaxed">
                           {connection.message}
                         </p>
-                        {relationship && (
-                          <p className="arena-data mt-2.5 text-muted-foreground">
-                            pipeline · {RELATIONSHIP_STATUS_LABELS[relationship.status]}
-                          </p>
-                        )}
                         <div className="mt-3">
                           <RespondButtons
                             connectionId={connection.id}
                             companyName={company.name}
-                            consequence={consequenceOf(relationship, "connected")}
                           />
                         </div>
                       </div>
@@ -246,11 +218,10 @@ export default async function ConnectionsPage() {
           </h2>
           <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
             Ranked by how well each company completes {personaName}&rsquo;s chain. Sending
-            a request files a pipeline record at Contacted.
+            a request carries a note and opens a thread once it is accepted.
           </p>
           <ol className="mt-3 border-t border-foreground/25">
             {suggestions.map((company, index) => {
-              const relationship = relationOf.get(company.id);
               return (
                 <li key={company.id} className="border-b py-4">
                   <div className="grid grid-cols-[auto_auto_minmax(0,1fr)] gap-x-3">
@@ -273,7 +244,11 @@ export default async function ConnectionsPage() {
                           fromId={personaId}
                           toId={company.id}
                           companyName={company.name}
-                          consequence={consequenceOf(relationship, "contacted")}
+                          context={{
+                            type: "company",
+                            id: company.id,
+                            label: company.name,
+                          }}
                         />
                       </div>
                     </div>

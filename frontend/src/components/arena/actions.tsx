@@ -1,20 +1,19 @@
 "use client";
 
 /**
- * The registry's writing instruments — every mutation on the four relational
+ * The registry's writing instruments — every mutation on the relational
  * surfaces passes through here.
  *
  * The signature is THE FILING WINDOW: a consequential action (accept, decline,
  * connect, express interest) commits optimistically and inline, but the ink
  * stays wet for five seconds — a meter of five squares fills one per second,
  * and Undo restores the row instantly. When the window closes the entry is
- * committed to the API and the strip names the consequence in full ("pipeline
- * record advanced to Connected") instead of hiding it. Leaving the page mid-
- * window flushes the commit: a decision made is a decision filed.
+ * committed to the API and the strip names the consequence in full instead of
+ * hiding it. Leaving the page mid-window flushes the commit: a decision made is
+ * a decision filed.
  *
- * The transport pattern is unchanged from the proven placeholder: call the
- * API from the browser, then `router.refresh()` so server components re-read
- * the mutated in-memory state.
+ * The transport pattern: call the API from the browser, then `router.refresh()`
+ * so server components re-read the mutated in-memory state.
  */
 
 import Link from "next/link";
@@ -35,16 +34,10 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   createConnection,
   expressInterest,
-  moveRelationship,
   respondToConnection,
   sendMessage,
-  trackRelationship,
 } from "@/lib/api";
-import {
-  RELATIONSHIP_STATUS_LABELS,
-  RELATIONSHIP_STATUS_ORDER,
-} from "@/lib/types";
-import type { Logo, RelationshipStatus } from "@/lib/types";
+import type { ConnectionContext, Logo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
@@ -192,40 +185,24 @@ function FiledError({ message }: { message: string }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* The consequence — what a filing does to the pipeline                */
+/* The consequence — what a filing actually does                       */
 /* ------------------------------------------------------------------ */
 
 /**
- * Computed server-side from the actual relationship record, so the strip
- * states what the backend really does: advance the record, or leave it where
- * it already stands.
+ * Accepting a request is not bookkeeping: the backend opens a conversation
+ * between the two companies, seeded with the request's own note. The strip says
+ * so, and points at it.
  */
-export interface PipelineConsequence {
-  kind: "advances" | "holds";
-  /** Label of the status the record advances to, or already holds. */
-  statusLabel: string;
-}
-
-function ConsequenceLine({
-  lead,
-  consequence,
-}: {
-  lead: string;
-  consequence: PipelineConsequence;
-}) {
+function ConsequenceLine({ lead, detail }: { lead: string; detail: string }) {
   return (
     <span className="text-sm leading-relaxed">
       <span className="font-medium">{lead}</span>{" "}
-      <span className="text-muted-foreground">
-        {consequence.kind === "advances"
-          ? `Pipeline record advanced to ${consequence.statusLabel}.`
-          : `Pipeline record already stands at ${consequence.statusLabel}.`}
-      </span>{" "}
+      <span className="text-muted-foreground">{detail}</span>{" "}
       <Link
-        href="/pipeline"
+        href="/messages"
         className="rounded-sm text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
-        Open pipeline
+        Open the conversation
       </Link>
     </span>
   );
@@ -238,11 +215,9 @@ function ConsequenceLine({
 export function RespondButtons({
   connectionId,
   companyName,
-  consequence,
 }: {
   connectionId: string;
   companyName: string;
-  consequence: PipelineConsequence;
 }) {
   const { phase, file, undo } = useFilingWindow();
   const [decision, setDecision] = useState<"accepted" | "declined" | null>(null);
@@ -306,13 +281,13 @@ export function RespondButtons({
           (decision === "accepted" ? (
             <ConsequenceLine
               lead={`Connected — ${companyName} joins the register.`}
-              consequence={consequence}
+              detail="A thread is open between you, carrying the note the request was sent with."
             />
           ) : (
             <span className="text-sm leading-relaxed">
               <span className="font-medium">Declined.</span>{" "}
               <span className="text-muted-foreground">
-                The request is closed; the pipeline record is untouched.
+                The request is closed. No conversation was opened.
               </span>
             </span>
           ))}
@@ -330,12 +305,17 @@ export function ConnectButton({
   fromId,
   toId,
   companyName,
-  consequence = { kind: "advances", statusLabel: RELATIONSHIP_STATUS_LABELS.contacted },
+  context = null,
+  message = "",
+  label = "Connect",
 }: {
   fromId: string;
   toId: string;
   companyName: string;
-  consequence?: PipelineConsequence;
+  /** What the request is about — a company, a product, or a notice. */
+  context?: ConnectionContext | null;
+  message?: string;
+  label?: string;
 }) {
   const { phase, file, undo } = useFilingWindow();
   const connectRef = useRef<HTMLButtonElement | null>(null);
@@ -360,9 +340,13 @@ export function ConnectButton({
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => file(() => createConnection({ from_id: fromId, to_id: toId }))}
+          onClick={() =>
+            file(() =>
+              createConnection({ from_id: fromId, to_id: toId, message, context }),
+            )
+          }
         >
-          Connect
+          {label}
         </Button>
       )}
       <div role="status" className="min-h-0">
@@ -380,7 +364,11 @@ export function ConnectButton({
         {phase.name === "filed" && (
           <ConsequenceLine
             lead={`Request sent to ${companyName}.`}
-            consequence={consequence}
+            detail={
+              context
+                ? `It carries what it is about: ${context.label}. A thread opens if they accept.`
+                : "A thread opens between you if they accept."
+            }
           />
         )}
         {phase.name === "failed" && <FiledError message={phase.message} />}
@@ -432,10 +420,12 @@ function InterestRegistered() {
 }
 
 export function InterestButton({
-  opportunityId,
+  noticeId,
+  asCompanyId,
   interested,
 }: {
-  opportunityId: string;
+  noticeId: string;
+  asCompanyId: string;
   interested: boolean;
 }) {
   const { phase, file, undo } = useFilingWindow();
@@ -463,7 +453,7 @@ export function InterestButton({
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => file(() => expressInterest(opportunityId))}
+          onClick={() => file(() => expressInterest(noticeId, asCompanyId))}
         >
           Express interest
         </Button>
@@ -600,172 +590,3 @@ export function MessageComposer({
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Pipeline — the docket stepper                                       */
-/* ------------------------------------------------------------------ */
-
-/**
- * Six square stations on the card itself — clearer than drag. Past stages sit
- * small and half-inked, the current stage is struck full, coming stages stand
- * open. Selecting any station moves the record; arrows travel the row.
- */
-export function StatusStepper({
-  relationshipId,
-  status,
-  companyName,
-  className,
-}: {
-  relationshipId: string;
-  status: RelationshipStatus;
-  companyName: string;
-  className?: string;
-}) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [target, setTarget] = useState<RelationshipStatus | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const stationRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  /* The server confirmed the move — drop the optimistic overlay. */
-  useEffect(() => {
-    if (target !== null && target === status) setTarget(null);
-  }, [status, target]);
-
-  const shown = target ?? status;
-  const currentIndex = RELATIONSHIP_STATUS_ORDER.indexOf(shown);
-  const moving = target !== null && target !== status;
-
-  const move = (next: RelationshipStatus) => {
-    if (next === shown) return;
-    setError(null);
-    setTarget(next);
-    void moveRelationship(relationshipId, next)
-      .then(() => startTransition(() => router.refresh()))
-      .catch((cause: unknown) => {
-        setTarget(null);
-        setError(cause instanceof Error ? cause.message : "The move was not filed");
-      });
-  };
-
-  const travel = (event: React.KeyboardEvent, index: number) => {
-    const next =
-      event.key === "ArrowRight"
-        ? Math.min(index + 1, RELATIONSHIP_STATUS_ORDER.length - 1)
-        : event.key === "ArrowLeft"
-          ? Math.max(index - 1, 0)
-          : event.key === "Home"
-            ? 0
-            : event.key === "End"
-              ? RELATIONSHIP_STATUS_ORDER.length - 1
-              : null;
-    if (next === null) return;
-    event.preventDefault();
-    stationRefs.current[next]?.focus();
-  };
-
-  return (
-    <div className={className}>
-      <div
-        role="group"
-        aria-label={`Pipeline stage for ${companyName}: ${RELATIONSHIP_STATUS_LABELS[shown]}, stage ${currentIndex + 1} of ${RELATIONSHIP_STATUS_ORDER.length}`}
-        className="flex items-center"
-      >
-        {RELATIONSHIP_STATUS_ORDER.map((value, index) => {
-          const here = value === shown;
-          const past = index < currentIndex;
-          return (
-            <span key={value} className="flex items-center">
-              {index > 0 && <span aria-hidden="true" className="h-px w-1 bg-border" />}
-              <button
-                ref={(el) => {
-                  stationRefs.current[index] = el;
-                }}
-                type="button"
-                aria-pressed={here}
-                title={
-                  here
-                    ? `${RELATIONSHIP_STATUS_LABELS[value]} — current stage`
-                    : `Move to ${RELATIONSHIP_STATUS_LABELS[value]}`
-                }
-                onClick={() => move(value)}
-                onKeyDown={(event) => travel(event, index)}
-                className="group/station cursor-pointer rounded-sm p-1.5 transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              >
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "block rounded-[1px] transition-colors",
-                    here && "size-2.5 bg-foreground",
-                    past && "size-2 bg-foreground/45 group-hover/station:bg-primary",
-                    !here && !past &&
-                      "size-2 border border-input group-hover/station:border-primary",
-                  )}
-                />
-                <span className="sr-only">
-                  {RELATIONSHIP_STATUS_LABELS[value]}, stage {index + 1} of{" "}
-                  {RELATIONSHIP_STATUS_ORDER.length}
-                  {here ? " — current stage" : ". Move the record here"}
-                </span>
-              </button>
-            </span>
-          );
-        })}
-      </div>
-      <p role="status" className="arena-data mt-1 text-muted-foreground">
-        {pad2(currentIndex + 1)} · {RELATIONSHIP_STATUS_LABELS[shown]}
-        {(moving || isPending) && <span className="text-foreground"> · filing…</span>}
-      </p>
-      {error && <p className="mt-1 text-[13px] text-destructive">{error} — try again.</p>}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Track a company into the pipeline (kept for other surfaces)         */
-/* ------------------------------------------------------------------ */
-
-export function TrackButton({ ownerId, companyId }: { ownerId: string; companyId: string }) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
-
-  if (done) {
-    return (
-      <span role="status" className="text-sm text-muted-foreground">
-        Tracked —{" "}
-        <Link
-          href="/pipeline"
-          className="rounded-sm text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        >
-          open pipeline
-        </Link>
-      </span>
-    );
-  }
-
-  return (
-    <span className="inline-flex items-center gap-2">
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        disabled={isPending}
-        onClick={() => {
-          setError(null);
-          void trackRelationship({ owner_id: ownerId, company_id: companyId })
-            .then(() => {
-              setDone(true);
-              startTransition(() => router.refresh());
-            })
-            .catch((cause: unknown) =>
-              setError(cause instanceof Error ? cause.message : "Not tracked"),
-            );
-        }}
-      >
-        Track in pipeline
-      </Button>
-      {error && <span className="text-[13px] text-destructive">{error}</span>}
-    </span>
-  );
-}

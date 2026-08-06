@@ -24,15 +24,10 @@ export type ConnectionStatus = "pending" | "accepted" | "declined";
 
 export type TraceabilityStatus = "declared" | "confirmed" | "verified";
 
-export type RelationshipStatus =
-  | "to_discover"
-  | "contacted"
-  | "connected"
-  | "in_discussion"
-  | "evaluation"
-  | "active_partner";
+export type NoticeKind = "need" | "offer";
 
-export type ContextType = "company" | "product" | "opportunity";
+/** What a conversation or a connection request refers to. */
+export type ContextType = "company" | "product" | "notice";
 
 /** Instructions for a locally generated SVG. No remote images anywhere. */
 export interface Visual {
@@ -143,6 +138,17 @@ export interface TraceabilityChain {
   steps: TraceabilityStep[];
 }
 
+/**
+ * What a connection request is about. A request always starts from something —
+ * a company found in the directory, a product in the catalogue, or a notice on
+ * the floor. The context travels into the conversation the request opens.
+ */
+export interface ConnectionContext {
+  type: ContextType;
+  id: string;
+  label: string;
+}
+
 export interface Connection {
   id: string;
   from_id: string;
@@ -151,6 +157,9 @@ export interface Connection {
   created_at: string;
   responded_at: string | null;
   message: string;
+  context: ConnectionContext | null;
+  /** Set when the request is accepted — the conversation it opened. */
+  conversation_id: string | null;
 }
 
 export interface ConnectionsView {
@@ -181,27 +190,47 @@ export interface Conversation {
   messages: Message[];
 }
 
-export interface Opportunity {
+/**
+ * A post on the floor. Either a `need` (a brief — what a company is looking for)
+ * or an `offer` (a product a company puts forward). Both declare `addressed_to`:
+ * which of the five company types the notice speaks to. An empty list means the
+ * notice is open to everyone.
+ */
+export interface Notice {
   id: string;
+  author_id: string;
+  kind: NoticeKind;
   title: string;
-  company_id: string;
-  sector: Sector;
-  region: string;
-  description: string;
+  body: string;
+  addressed_to: CompanyType[];
+  sector: Sector | null;
+  /** Needs only. */
+  region: string | null;
   skills: string[];
+  deadline: string | null;
+  /** Offers only — a product belonging to the author. */
+  product_id: string | null;
   posted_at: string;
-  deadline: string;
-  interested: boolean;
+  interested_by: string[];
 }
 
-export interface Relationship {
-  id: string;
-  owner_id: string;
-  company_id: string;
-  status: RelationshipStatus;
-  status_since: string;
-  first_seen: string;
-  note: string;
+/** The floor, seen from one company: connections first, then what addresses them. */
+export interface Feed {
+  from_connections: Notice[];
+  for_you: Notice[];
+}
+
+export interface NoticeDraft {
+  author_id: string;
+  kind: NoticeKind;
+  title: string;
+  body?: string;
+  addressed_to?: CompanyType[];
+  sector?: Sector | null;
+  region?: string | null;
+  skills?: string[];
+  deadline?: string | null;
+  product_id?: string | null;
 }
 
 export interface FacetValue {
@@ -259,23 +288,18 @@ export const CHAIN_POSITION_LABELS: Record<ChainPosition, string> = {
   brand: "Brand",
 };
 
-/** Ordered as the pipeline progresses. */
-export const RELATIONSHIP_STATUS_ORDER: RelationshipStatus[] = [
-  "to_discover",
-  "contacted",
-  "connected",
-  "in_discussion",
-  "evaluation",
-  "active_partner",
+/** The five company types, in chain order — the audience a notice can address. */
+export const COMPANY_TYPE_ORDER: CompanyType[] = [
+  "raw_material_producer",
+  "processor",
+  "manufacturer",
+  "supplier",
+  "brand",
 ];
 
-export const RELATIONSHIP_STATUS_LABELS: Record<RelationshipStatus, string> = {
-  to_discover: "To discover",
-  contacted: "Contacted",
-  connected: "Connected",
-  in_discussion: "In discussion",
-  evaluation: "Evaluation",
-  active_partner: "Active partner",
+export const NOTICE_KIND_LABELS: Record<NoticeKind, string> = {
+  need: "Need",
+  offer: "Offer",
 };
 
 export const TRACEABILITY_STATUS_LABELS: Record<TraceabilityStatus, string> = {

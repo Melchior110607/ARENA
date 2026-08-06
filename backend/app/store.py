@@ -45,23 +45,7 @@ CHAIN_POSITION_ORDER = list(CHAIN_POSITION_LABELS)
 
 SECTOR_LABELS = {"textile": "Textile", "construction": "Construction"}
 
-RELATIONSHIP_STATUS_ORDER = [
-    "to_discover",
-    "contacted",
-    "connected",
-    "in_discussion",
-    "evaluation",
-    "active_partner",
-]
-
-RELATIONSHIP_STATUS_LABELS = {
-    "to_discover": "To discover",
-    "contacted": "Contacted",
-    "connected": "Connected",
-    "in_discussion": "In discussion",
-    "evaluation": "Evaluation",
-    "active_partner": "Active partner",
-}
+ALL_COMPANY_TYPES = list(COMPANY_TYPE_LABELS)
 
 
 def _load(name: str) -> list[dict[str, Any]]:
@@ -74,8 +58,7 @@ products: list[dict[str, Any]] = _load("products")
 chains: list[dict[str, Any]] = _load("traceability")
 connections: list[dict[str, Any]] = _load("connections")
 conversations: list[dict[str, Any]] = _load("conversations")
-opportunities: list[dict[str, Any]] = _load("opportunities")
-relationships: list[dict[str, Any]] = _load("relationships")
+notices: list[dict[str, Any]] = _load("notices")
 
 _id_counter = itertools.count(1)
 
@@ -117,12 +100,8 @@ def conversation(conversation_id: str) -> dict[str, Any] | None:
     return next((c for c in conversations if c["id"] == conversation_id), None)
 
 
-def opportunity(opportunity_id: str) -> dict[str, Any] | None:
-    return next((o for o in opportunities if o["id"] == opportunity_id), None)
-
-
-def relationship(relationship_id: str) -> dict[str, Any] | None:
-    return next((r for r in relationships if r["id"] == relationship_id), None)
+def notice(notice_id: str) -> dict[str, Any] | None:
+    return next((n for n in notices if n["id"] == notice_id), None)
 
 
 def personas() -> list[dict[str, Any]]:
@@ -346,7 +325,12 @@ def connections_view(company_id: str) -> dict[str, Any]:
     }
 
 
-def create_connection(from_id: str, to_id: str, message: str = "") -> dict[str, Any]:
+def create_connection(
+    from_id: str,
+    to_id: str,
+    message: str = "",
+    context: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     existing = next(
         (
             c
@@ -366,9 +350,10 @@ def create_connection(from_id: str, to_id: str, message: str = "") -> dict[str, 
         "created_at": _today(),
         "responded_at": None,
         "message": message,
+        "context": context,
+        "conversation_id": None,
     }
     connections.append(record)
-    _ensure_relationship(from_id, to_id, "contacted")
     return record
 
 
@@ -376,11 +361,23 @@ def update_connection(connection_id: str, status: str) -> dict[str, Any] | None:
     record = next((c for c in connections if c["id"] == connection_id), None)
     if record is None:
         return None
+
     record["status"] = status
     record["responded_at"] = _today()
-    if status == "accepted":
-        _ensure_relationship(record["to_id"], record["from_id"], "connected")
-        _ensure_relationship(record["from_id"], record["to_id"], "connected")
+
+    # Accepting is the whole point: the two companies are now connected and can
+    # talk. Opening the conversation here is what makes that true — otherwise
+    # accepting leads nowhere.
+    if status == "accepted" and record.get("conversation_id") is None:
+        convo = open_conversation(
+            record["from_id"],
+            record["to_id"],
+            record.get("context"),
+            first_message=record.get("message") or "",
+            first_message_from=record["from_id"],
+        )
+        record["conversation_id"] = convo["id"]
+
     return record
 
 
@@ -391,6 +388,52 @@ def update_connection(connection_id: str, status: str) -> dict[str, Any] | None:
 
 def conversations_for(company_id: str) -> list[dict[str, Any]]:
     return [c for c in conversations if company_id in c["participants"]]
+
+
+def _default_context(other_id: str) -> dict[str, Any]:
+    other = company(other_id)
+    return {
+        "type": "company",
+        "id": other_id,
+        "label": other["name"] if other else other_id,
+    }
+
+
+def open_conversation(
+    a_id: str,
+    b_id: str,
+    context: dict[str, Any] | None = None,
+    first_message: str = "",
+    first_message_from: str | None = None,
+) -> dict[str, Any]:
+    """Open a thread between two companies, or return the one that already exists."""
+    existing = next(
+        (c for c in conversations if set(c["participants"]) == {a_id, b_id}),
+        None,
+    )
+    if existing is not None:
+        return existing
+
+    convo: dict[str, Any] = {
+        "id": _next_id("conv"),
+        "participants": [a_id, b_id],
+        "context": context or _default_context(b_id),
+        "messages": [],
+    }
+    conversations.append(convo)
+
+    # The request's own note becomes the first thing said — the conversation
+    # starts where the request started.
+    if first_message.strip():
+        convo["messages"].append(
+            {
+                "id": _next_id("msg"),
+                "from_id": first_message_from or a_id,
+                "body": first_message.strip(),
+                "sent_at": f"{_today()}T00:00:00Z",
+            }
+        )
+    return convo
 
 
 def add_message(conversation_id: str, from_id: str, body: str) -> dict[str, Any] | None:
@@ -408,64 +451,104 @@ def add_message(conversation_id: str, from_id: str, body: str) -> dict[str, Any]
 
 
 # --------------------------------------------------------------------------- #
-# Opportunities
+# Notices and the floor
 # --------------------------------------------------------------------------- #
 
 
-def express_interest(opportunity_id: str) -> dict[str, Any] | None:
-    record = opportunity(opportunity_id)
-    if record is None:
-        return None
-    record["interested"] = True
+def filter_notices(
+    *,
+    kind: str | None = None,
+    sector: str | None = None,
+    addressed_to: str | None = None,
+    author: str | None = None,
+) -> list[dict[str, Any]]:
+    results = notices
+    if kind:
+        results = [n for n in results if n["kind"] == kind]
+    if sector:
+        results = [n for n in results if n.get("sector") in (sector, None)]
+    if addressed_to:
+        results = [n for n in results if addressed_to in n["addressed_to"]]
+    if author:
+        results = [n for n in results if n["author_id"] == author]
+    return sorted(results, key=lambda n: n["posted_at"], reverse=True)
+
+
+def create_notice(payload: dict[str, Any]) -> dict[str, Any]:
+    record = {
+        "id": _next_id("notice"),
+        "posted_at": _today(),
+        "interested_by": [],
+        **payload,
+    }
+    notices.append(record)
     return record
 
 
-# --------------------------------------------------------------------------- #
-# Relationships (pipeline)
-# --------------------------------------------------------------------------- #
+def express_interest(notice_id: str, company_id: str) -> dict[str, Any] | None:
+    record = notice(notice_id)
+    if record is None:
+        return None
+    if company_id not in record["interested_by"]:
+        record["interested_by"].append(company_id)
+    return record
 
 
-def relationships_for(owner_id: str) -> list[dict[str, Any]]:
-    return [r for r in relationships if r["owner_id"] == owner_id]
+def _notice_score(item: dict[str, Any], me: dict[str, Any]) -> tuple[int, str]:
+    """How strongly a notice addresses this reader. Deliberately explainable —
+    the brief rules out AI matching, and a reader should be able to see why a
+    notice reached them."""
+    author = company(item["author_id"])
+    points = 0
+
+    # Addressed to my kind of company, or addressed to everyone.
+    if not item["addressed_to"] or me["type"] in item["addressed_to"]:
+        points += 3
+
+    # Sector dominates: a Swiss textile brand has no use for glulam beams. Cross-
+    # sector notices are pushed down rather than hidden — Arena is deliberately
+    # cross-sector, and the occasional crossover is worth seeing.
+    notice_sector = item.get("sector")
+    if notice_sector is None or notice_sector == me["sector"]:
+        points += 4
+    else:
+        points -= 3
+
+    if author is not None:
+        # Someone upstream of you is someone you might buy from.
+        distance = CHAIN_POSITION_ORDER.index(me["chain_position"]) - CHAIN_POSITION_ORDER.index(
+            author["chain_position"]
+        )
+        if distance > 0:
+            points += 2
+        shared = set(author["capabilities"]["materials"]) & set(me["capabilities"]["materials"])
+        points += min(len(shared), 2)
+
+    # Recency breaks ties.
+    return (-points, item["posted_at"])
 
 
-def _ensure_relationship(owner_id: str, company_id: str, status: str) -> dict[str, Any]:
-    record = next(
-        (r for r in relationships if r["owner_id"] == owner_id and r["company_id"] == company_id),
-        None,
+def feed_for(company_id: str) -> dict[str, Any]:
+    me = company(company_id)
+    if me is None:
+        return {"from_connections": [], "for_you": []}
+
+    connected = _connected_ids(company_id)
+    mine_and_connections = connected | {company_id}
+
+    from_connections = sorted(
+        [n for n in notices if n["author_id"] in mine_and_connections],
+        key=lambda n: n["posted_at"],
+        reverse=True,
     )
-    if record is None:
-        record = {
-            "id": _next_id("rel"),
-            "owner_id": owner_id,
-            "company_id": company_id,
-            "status": status,
-            "status_since": _today(),
-            "first_seen": _today(),
-            "note": "Added from Arena during this session.",
-        }
-        relationships.append(record)
-        return record
+    for_you = sorted(
+        [n for n in notices if n["author_id"] not in mine_and_connections],
+        key=lambda n: (_notice_score(n, me)[0], _invert(n["posted_at"])),
+    )
 
-    # Only move forward along the pipeline, never backwards.
-    if RELATIONSHIP_STATUS_ORDER.index(status) > RELATIONSHIP_STATUS_ORDER.index(record["status"]):
-        record["status"] = status
-        record["status_since"] = _today()
-    return record
+    return {"from_connections": from_connections, "for_you": for_you}
 
 
-def create_relationship(owner_id: str, company_id: str, status: str, note: str) -> dict[str, Any]:
-    record = _ensure_relationship(owner_id, company_id, status)
-    if note:
-        record["note"] = note
-    return record
-
-
-def update_relationship(relationship_id: str, status: str) -> dict[str, Any] | None:
-    record = relationship(relationship_id)
-    if record is None:
-        return None
-    if record["status"] != status:
-        record["status"] = status
-        record["status_since"] = _today()
-    return record
+def _invert(date_string: str) -> str:
+    """Sort a date descending inside an ascending tuple sort."""
+    return "".join(chr(255 - ord(ch)) for ch in date_string)
