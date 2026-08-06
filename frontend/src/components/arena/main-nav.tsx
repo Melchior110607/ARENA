@@ -4,6 +4,11 @@
  * The index row of the masthead, read like the section index of a works
  * catalogue. The active surface carries a vermilion signal underline plus
  * full-strength text — never colour alone.
+ *
+ * Signed out, the index shrinks to what a visitor can actually open: the
+ * prospectus (the public page at `/`), the company directory and the product
+ * catalogue. Connections and Messages are member registers and disappear
+ * rather than dead-ending.
  */
 
 import Link from "next/link";
@@ -11,7 +16,7 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-const NAV = [
+const MEMBER_NAV = [
   { href: "/", label: "Floor" },
   { href: "/companies", label: "Companies" },
   { href: "/products", label: "Products" },
@@ -19,7 +24,14 @@ const NAV = [
   { href: "/messages", label: "Messages" },
 ] as const;
 
-export function MainNav() {
+const VISITOR_NAV = [
+  { href: "/", label: "Prospectus" },
+  { href: "/companies", label: "Companies" },
+  { href: "/products", label: "Products" },
+] as const;
+
+export function MainNav({ signedOut = false }: { signedOut?: boolean }) {
+  const NAV = signedOut ? VISITOR_NAV : MEMBER_NAV;
   const pathname = usePathname();
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);

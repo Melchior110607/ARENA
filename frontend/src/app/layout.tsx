@@ -7,6 +7,7 @@ import { PersonaSwitcher } from "@/components/arena/persona-switcher";
 import { SiteFooter } from "@/components/arena/site-footer";
 import { getPersonas } from "@/lib/api";
 import { getPersonaId } from "@/lib/persona.server";
+import { isVisitor } from "@/lib/persona";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -66,7 +67,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <PersonaSwitcher personas={personas} current={personaId} />
             </div>
             <div className="border-t border-plate-border">
-              <MainNav />
+              <MainNav signedOut={isVisitor(personaId)} />
             </div>
           </div>
         </header>

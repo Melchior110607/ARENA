@@ -22,6 +22,7 @@
 import Link from "next/link";
 
 import { HomeFolio, type Specimen } from "@/components/arena/home-folio";
+import { SignInCta } from "@/components/arena/sign-in-cta";
 import { StatusSeal } from "@/components/arena/status-seal";
 import { Button } from "@/components/ui/button";
 import { getCompanies, getNotices, getProducts, getTraceability } from "@/lib/api";
@@ -91,7 +92,8 @@ export async function PublicLanding() {
           stage by stage.
         </p>
         <div className="mt-6 flex flex-wrap items-center gap-4">
-          <Button asChild>
+          <SignInCta>Sign in — open the floor</SignInCta>
+          <Button asChild variant="outline">
             <Link href="/companies">Browse the {companies.length} companies</Link>
           </Button>
           {(specimens.textile || specimens.construction) && (
@@ -103,6 +105,9 @@ export async function PublicLanding() {
             </Link>
           )}
         </div>
+        <p className="arena-data mt-3 text-muted-foreground">
+          No account needed in this prototype — you enter as a fictional member company
+        </p>
       </section>
 
       {/* --------------------- The folio: two sections, live data --------------------- */}
@@ -151,11 +156,9 @@ export async function PublicLanding() {
             Sourcing starts with knowing who can actually make it.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button asChild variant="outline">
-              <Link href="/companies">Browse companies</Link>
-            </Button>
+            <SignInCta variant="outline">Sign in to post on the floor</SignInCta>
             <Button asChild variant="ghost">
-              <Link href="/products">Browse products</Link>
+              <Link href="/companies">Browse companies</Link>
             </Button>
           </div>
         </div>

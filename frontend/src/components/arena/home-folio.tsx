@@ -17,9 +17,9 @@ import Link from "next/link";
 import { ChainFigure } from "@/components/arena/chain-figure";
 import { MaterialSwatch } from "@/components/arena/material-swatch";
 import { Monogram } from "@/components/arena/monogram";
+import { SignInCta } from "@/components/arena/sign-in-cta";
 import { StatusSeal } from "@/components/arena/status-seal";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -382,12 +382,9 @@ export function HomeFolio({
           <h2 id="opportunities-heading" className="text-xl leading-tight font-semibold">
             Open opportunities
           </h2>
-          <Link
-            href="/"
-            className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
-          >
-            All {notices.length} briefs →
-          </Link>
+          <p className="arena-data text-muted-foreground">
+            {notices.length} open briefs on the floor
+          </p>
         </div>
         <ul className="mt-4">
           {sectorNotices.map((opportunity) => {
@@ -399,7 +396,7 @@ export function HomeFolio({
               >
                 <div className="min-w-0">
                   <Link
-                    href="/"
+                    href={`/floor/${opportunity.id}`}
                     className="font-medium underline-offset-4 transition-colors hover:text-primary hover:underline"
                   >
                     {opportunity.title}
@@ -426,9 +423,7 @@ export function HomeFolio({
           })}
         </ul>
         <div className="mt-6">
-          <Button asChild variant="outline">
-            <Link href="/">Browse all briefs</Link>
-          </Button>
+          <SignInCta variant="outline">Sign in to read and answer the briefs</SignInCta>
         </div>
       </section>
       </div>
