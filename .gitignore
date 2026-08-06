@@ -1,0 +1,14 @@
+# Node / Next
+node_modules/
+.next/
+next-env.d.ts
+.env*.local
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# OS / editors
+.DS_Store
+*.swp

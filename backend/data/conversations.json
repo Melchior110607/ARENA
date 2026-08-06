@@ -1,0 +1,133 @@
+[
+  {
+    "id": "conv-01",
+    "participants": ["maison-vaudoise", "filatura-brescia"],
+    "context": { "type": "product", "id": "organic-cotton-yarn-ne30", "label": "Ring-Spun Organic Cotton Ne 30" },
+    "messages": [
+      {
+        "id": "msg-01-1",
+        "from_id": "maison-vaudoise",
+        "body": "We would like to run the whole spring jersey programme on a single grower lot. Is that realistic at 1.2 t, or do you need to blend to hold the count?",
+        "sent_at": "2026-07-14T09:12:00Z"
+      },
+      {
+        "id": "msg-01-2",
+        "from_id": "filatura-brescia",
+        "body": "Realistic. 1.2 t is about four bale groups from Atlas. We keep them separate through carding and combing — the cost is roughly 6% over a blended run, mostly changeover time.",
+        "sent_at": "2026-07-14T14:38:00Z"
+      },
+      {
+        "id": "msg-01-3",
+        "from_id": "maison-vaudoise",
+        "body": "That works. Can the field-block code stay on the cone label so Tessitura Lario can carry it into the greige rolls?",
+        "sent_at": "2026-07-15T08:05:00Z"
+      },
+      {
+        "id": "msg-01-4",
+        "from_id": "filatura-brescia",
+        "body": "Yes. We already do that for two other customers. I will send the label spec so their inspection team knows what to look for.",
+        "sent_at": "2026-07-15T10:47:00Z"
+      }
+    ]
+  },
+  {
+    "id": "conv-02",
+    "participants": ["maison-vaudoise", "confeccoes-douro"],
+    "context": { "type": "product", "id": "heavyweight-tshirt-cmt", "label": "Heavyweight T-Shirt, Cut-Make-Trim" },
+    "messages": [
+      {
+        "id": "msg-02-1",
+        "from_id": "confeccoes-douro",
+        "body": "Your development samples are cut and will ship Thursday. One note: the neck rib you specified is 5% elastane, which will not clear GOTS at garment level.",
+        "sent_at": "2026-07-28T11:20:00Z"
+      },
+      {
+        "id": "msg-02-2",
+        "from_id": "maison-vaudoise",
+        "body": "Good catch. Can Tessitura Lario do the same rib in 100% cotton without losing recovery? We would rather change the trim than drop the claim.",
+        "sent_at": "2026-07-28T13:02:00Z"
+      },
+      {
+        "id": "msg-02-3",
+        "from_id": "confeccoes-douro",
+        "body": "They can, at a tighter gauge. Recovery drops from 92% to around 86% after five cycles. Acceptable for a boxy fit, less so for a fitted neckline.",
+        "sent_at": "2026-07-29T08:44:00Z"
+      }
+    ]
+  },
+  {
+    "id": "conv-03",
+    "participants": ["maison-vaudoise", "teinturerie-des-vosges"],
+    "context": { "type": "company", "id": "teinturerie-des-vosges", "label": "Teinturerie des Vosges" },
+    "messages": [
+      {
+        "id": "msg-03-1",
+        "from_id": "maison-vaudoise",
+        "body": "We publish your water recovery figure on our product pages. Is the 78% independently measured, or is it your own metering?",
+        "sent_at": "2026-07-02T15:30:00Z"
+      },
+      {
+        "id": "msg-03-2",
+        "from_id": "teinturerie-des-vosges",
+        "body": "Our own metering, calibrated annually. We have never had it externally verified. If you need that for your chain, we would be willing to share the cost of an audit.",
+        "sent_at": "2026-07-03T09:15:00Z"
+      },
+      {
+        "id": "msg-03-3",
+        "from_id": "maison-vaudoise",
+        "body": "Let us do that. It would move this stage from confirmed to verified, which is the last gap in the T-shirt chain.",
+        "sent_at": "2026-07-03T16:22:00Z"
+      }
+    ]
+  },
+  {
+    "id": "conv-04",
+    "participants": ["atelier-romand-construction", "holz-emmental"],
+    "context": { "type": "product", "id": "glulam-beam-spruce", "label": "Glulam Beam, Emmental Spruce" },
+    "messages": [
+      {
+        "id": "msg-04-1",
+        "from_id": "atelier-romand-construction",
+        "body": "For the Fribourg school we need 140 m³ of GL24h, longest span 14.2 m. Can you hold parcel identifiers across a delivery that size?",
+        "sent_at": "2026-07-19T10:00:00Z"
+      },
+      {
+        "id": "msg-04-2",
+        "from_id": "holz-emmental",
+        "body": "Yes, but 140 m³ will span three or four parcels. You will get a parcel list per beam batch rather than one identifier for the whole order. Is that usable in your passport?",
+        "sent_at": "2026-07-19T15:41:00Z"
+      },
+      {
+        "id": "msg-04-3",
+        "from_id": "atelier-romand-construction",
+        "body": "Perfectly usable — the passport is per element anyway. Send the drying records with the quote and we will put you into the tender.",
+        "sent_at": "2026-07-20T08:12:00Z"
+      }
+    ]
+  },
+  {
+    "id": "conv-05",
+    "participants": ["atelier-romand-construction", "betoncycle-rhein"],
+    "context": { "type": "opportunity", "id": "opp-02", "label": "Recycled concrete supplier for a Fribourg school project" },
+    "messages": [
+      {
+        "id": "msg-05-1",
+        "from_id": "betoncycle-rhein",
+        "body": "We can hold 62% recycled aggregate on C30/37 for this volume. Above that the water absorption starts to move the mix design and we would need a longer lead time.",
+        "sent_at": "2026-07-23T09:30:00Z"
+      },
+      {
+        "id": "msg-05-2",
+        "from_id": "atelier-romand-construction",
+        "body": "62% clears the tender threshold with margin. What we need in writing is that the figure is measured per batch and reported, not a line average.",
+        "sent_at": "2026-07-23T14:05:00Z"
+      },
+      {
+        "id": "msg-05-3",
+        "from_id": "betoncycle-rhein",
+        "body": "That is how we report it already. Every delivery note carries the batch figure and the source demolition sites.",
+        "sent_at": "2026-07-24T07:50:00Z"
+      }
+    ]
+  }
+]

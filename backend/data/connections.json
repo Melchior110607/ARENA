@@ -1,0 +1,110 @@
+[
+  {
+    "id": "conn-01",
+    "from_id": "maison-vaudoise",
+    "to_id": "filatura-brescia",
+    "status": "accepted",
+    "created_at": "2025-10-14",
+    "responded_at": "2025-10-16",
+    "message": "We are moving our jersey programme to single-origin yarn and would like to talk about lot separation."
+  },
+  {
+    "id": "conn-02",
+    "from_id": "maison-vaudoise",
+    "to_id": "confeccoes-douro",
+    "status": "accepted",
+    "created_at": "2025-09-02",
+    "responded_at": "2025-09-04",
+    "message": "Looking for a factory that will take 150-piece development runs alongside our core programme."
+  },
+  {
+    "id": "conn-03",
+    "from_id": "teinturerie-des-vosges",
+    "to_id": "maison-vaudoise",
+    "status": "accepted",
+    "created_at": "2026-03-30",
+    "responded_at": "2026-04-02",
+    "message": "We saw your published chain and think our closed-loop line fits your water commitments."
+  },
+  {
+    "id": "conn-04",
+    "from_id": "maison-vaudoise",
+    "to_id": "refibra-iberica",
+    "status": "accepted",
+    "created_at": "2026-06-08",
+    "responded_at": "2026-06-11",
+    "message": "Interested in colour-sorted recycled cotton for an undyed heather programme."
+  },
+  {
+    "id": "conn-05",
+    "from_id": "tessitura-lario",
+    "to_id": "maison-vaudoise",
+    "status": "pending",
+    "created_at": "2026-07-22",
+    "responded_at": null,
+    "message": "Filatura Brescia mentioned your jersey project. We knit their Ne 30 regularly and have capacity from October."
+  },
+  {
+    "id": "conn-06",
+    "from_id": "nordwolle-handel",
+    "to_id": "maison-vaudoise",
+    "status": "pending",
+    "created_at": "2026-07-18",
+    "responded_at": null,
+    "message": "We supply Responsible Wool Standard tops with full lot documentation — relevant if you add knitwear."
+  },
+  {
+    "id": "conn-07",
+    "from_id": "maison-vaudoise",
+    "to_id": "lino-baltico",
+    "status": "pending",
+    "created_at": "2026-07-30",
+    "responded_at": null,
+    "message": "We are scoping a linen capsule for 2027 and want to understand your fibre grading before we approach spinners."
+  },
+  {
+    "id": "conn-08",
+    "from_id": "atelier-romand-construction",
+    "to_id": "holz-emmental",
+    "status": "accepted",
+    "created_at": "2024-02-28",
+    "responded_at": "2024-03-04",
+    "message": "We need parcel-level identifiers for our material passports. Can you supply them as standard?"
+  },
+  {
+    "id": "conn-09",
+    "from_id": "atelier-romand-construction",
+    "to_id": "betoncycle-rhein",
+    "status": "accepted",
+    "created_at": "2025-02-11",
+    "responded_at": "2025-02-14",
+    "message": "Specifying recycled aggregate on a Fribourg project. Need declared content per batch, not per line."
+  },
+  {
+    "id": "conn-10",
+    "from_id": "isolana-verde",
+    "to_id": "atelier-romand-construction",
+    "status": "accepted",
+    "created_at": "2026-05-05",
+    "responded_at": "2026-05-12",
+    "message": "Our flax batts are certified under natureplus and should suit your timber frame details."
+  },
+  {
+    "id": "conn-11",
+    "from_id": "metallwerk-schwaben",
+    "to_id": "atelier-romand-construction",
+    "status": "pending",
+    "created_at": "2026-07-15",
+    "responded_at": null,
+    "message": "We publish EPDs for the full profile catalogue and can supply melt certificates per coil."
+  },
+  {
+    "id": "conn-12",
+    "from_id": "atelier-romand-construction",
+    "to_id": "vitrum-alpes",
+    "status": "pending",
+    "created_at": "2026-07-28",
+    "responded_at": null,
+    "message": "The demountable spacer system is exactly what our disassembly plans need. Can we review a sample unit?"
+  }
+]

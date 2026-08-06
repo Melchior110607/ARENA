@@ -1,0 +1,74 @@
+[
+  {
+    "id": "opp-01",
+    "title": "Knitwear manufacturer in Southern Europe for 300-piece runs",
+    "company_id": "maison-vaudoise",
+    "sector": "textile",
+    "region": "Southern Europe",
+    "description": "We are adding four knitwear styles to the permanent collection and need a factory that treats a 300-piece order as a real order. Fabric comes from our existing mills; we need cut-make-trim plus finishing, with development samples inside two weeks.",
+    "skills": ["Small-batch knitwear", "GOTS chain of custody", "In-house sampling", "Development in under 14 days"],
+    "posted_at": "2026-07-29",
+    "deadline": "2026-09-30",
+    "interested": false
+  },
+  {
+    "id": "opp-02",
+    "title": "Recycled concrete supplier for a Fribourg school project",
+    "company_id": "atelier-romand-construction",
+    "sector": "construction",
+    "region": "Western Europe",
+    "description": "Public tender for a 4,800 m² primary school. We need structural precast with declared recycled aggregate content above 55%, delivered within 200 km of Fribourg, and an EPD we can put straight into the material passport.",
+    "skills": ["Recycled aggregate certification", "Structural precast", "EPD published", "Delivery within 200 km"],
+    "posted_at": "2026-07-21",
+    "deadline": "2026-10-15",
+    "interested": false
+  },
+  {
+    "id": "opp-03",
+    "title": "GOTS-certified jersey mill for a repeat programme",
+    "company_id": "confeccoes-douro",
+    "sector": "textile",
+    "region": "Southern Europe",
+    "description": "Two of our brand customers want the same jersey base four times a year. We are looking for a knitting mill that can hold yarn lots and guarantee shade continuity across drops, rather than requoting every season.",
+    "skills": ["Circular knitting", "GOTS certified", "Lot continuity", "Gauge 24 and 28"],
+    "posted_at": "2026-07-11",
+    "deadline": "2026-09-05",
+    "interested": false
+  },
+  {
+    "id": "opp-04",
+    "title": "Low-carbon insulation for 4,200 m² of timber frame",
+    "company_id": "atelier-romand-construction",
+    "sector": "construction",
+    "region": "Western Europe",
+    "description": "Timber frame residential project in Vaud. We need bio-based batts with a published EPD, thermal conductivity at or below 0.040 W/mK, and a documented end-of-life route. Mineral wool will not clear our material passport requirements.",
+    "skills": ["Bio-based insulation", "EPD published", "Compostable or recyclable end of life", "Cut-to-size delivery"],
+    "posted_at": "2026-06-30",
+    "deadline": "2026-08-29",
+    "interested": false
+  },
+  {
+    "id": "opp-05",
+    "title": "Garment factories with cutting-room waste to divert",
+    "company_id": "refibra-iberica",
+    "sector": "textile",
+    "region": "Southern Europe",
+    "description": "We buy post-industrial cutting waste by composition and colour. If your factory currently pays for disposal, we will collect from 500 kg and pay per tonne on clean single-composition lots. Looking for four to six regular partners in Iberia.",
+    "skills": ["Cutting-room waste separation", "Single-composition lots", "Monthly collection volume above 500 kg"],
+    "posted_at": "2026-07-25",
+    "deadline": "2026-11-30",
+    "interested": false
+  },
+  {
+    "id": "opp-06",
+    "title": "Certification partner for demountable glazing EPD",
+    "company_id": "vitrum-alpes",
+    "sector": "construction",
+    "region": "Western Europe",
+    "description": "Our demountable spacer system has no existing category rule that covers reglazing as a service life extension. We are looking for a certification body or LCA consultancy willing to develop the methodology with us and stand behind the result.",
+    "skills": ["LCA methodology", "EPD verification", "Construction product category rules"],
+    "posted_at": "2026-07-08",
+    "deadline": "2026-09-19",
+    "interested": false
+  }
+]
