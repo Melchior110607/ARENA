@@ -1,0 +1,243 @@
+[
+  {
+    "id": "chain-jersey-tshirt",
+    "product_id": "heavyweight-tshirt-cmt",
+    "sector": "textile",
+    "summary": "Six stages from an Aegean cotton field to a Porto cutting floor, each one held by a named company. Two stages are verified by third-party audit, three are confirmed by the company upstream, one is declared only.",
+    "steps": [
+      {
+        "order": 1,
+        "company_id": "atlas-cotton-collective",
+        "role": "Raw material producer",
+        "country": "TR",
+        "country_name": "Türkiye",
+        "material": "Organic cotton lint",
+        "process": "Cultivation, hand picking, roller ginning",
+        "status": "verified",
+        "note": "Field-block identifier issued at ginning. GOTS scope certificate checked against the 2026 harvest."
+      },
+      {
+        "order": 2,
+        "company_id": "filatura-brescia",
+        "role": "Processor — spinning",
+        "country": "IT",
+        "country_name": "Italy",
+        "material": "Ring-spun yarn Ne 30",
+        "process": "Carding, combing, ring spinning",
+        "status": "verified",
+        "note": "Bales run as a single-origin lot without blending. Cone labels carry the incoming field-block code."
+      },
+      {
+        "order": 3,
+        "company_id": "tessitura-lario",
+        "role": "Processor — knitting",
+        "country": "IT",
+        "country_name": "Italy",
+        "material": "Greige single jersey 180 g/m²",
+        "process": "Circular knitting, greige inspection",
+        "status": "confirmed",
+        "note": "Yarn lot number confirmed against the spinner's delivery note. No independent audit of the knitting floor."
+      },
+      {
+        "order": 4,
+        "company_id": "teinturerie-des-vosges",
+        "role": "Processor — dyeing and finishing",
+        "country": "FR",
+        "country_name": "France",
+        "material": "Piece-dyed jersey 190 g/m²",
+        "process": "Scouring, reactive dyeing, sanforizing",
+        "status": "confirmed",
+        "note": "Dye recipe archived per lot. Water recovery figure self-reported at 78%, not independently measured."
+      },
+      {
+        "order": 5,
+        "company_id": "confeccoes-douro",
+        "role": "Manufacturer — garment making",
+        "country": "PT",
+        "country_name": "Portugal",
+        "material": "Finished T-shirt",
+        "process": "Automated cutting, cut-make-trim, finishing",
+        "status": "confirmed",
+        "note": "SA8000 certificate on file. Cell allocation and piece counts confirmed by the factory for this order."
+      },
+      {
+        "order": 6,
+        "company_id": "maison-vaudoise",
+        "role": "Brand",
+        "country": "CH",
+        "country_name": "Switzerland",
+        "material": "Retail product",
+        "process": "Quality control, labelling, distribution",
+        "status": "declared",
+        "note": "Chain published by the brand on the product page. Trims and sewing thread are not yet covered."
+      }
+    ]
+  },
+  {
+    "id": "chain-linen-shirting",
+    "product_id": "natural-dye-linen",
+    "sector": "textile",
+    "summary": "Four stages within a 1,900 km radius, from Lithuanian flax fields to a Vosges natural dye line. The plant-dye stage is declared only — batch variation is documented rather than certified.",
+    "steps": [
+      {
+        "order": 1,
+        "company_id": "lino-baltico",
+        "role": "Raw material producer",
+        "country": "LT",
+        "country_name": "Lithuania",
+        "material": "Long line flax fibre",
+        "process": "Cultivation, dew retting, scutching",
+        "status": "verified",
+        "note": "European Flax certification covers cultivation and retting. Field parcels recorded per bale."
+      },
+      {
+        "order": 2,
+        "company_id": "filatura-brescia",
+        "role": "Processor — spinning",
+        "country": "IT",
+        "country_name": "Italy",
+        "material": "Wet-spun linen yarn",
+        "process": "Hackling, wet spinning, winding",
+        "status": "confirmed",
+        "note": "Fibre grade and origin confirmed against the scutcher's delivery documents."
+      },
+      {
+        "order": 3,
+        "company_id": "tessitura-lario",
+        "role": "Processor — weaving",
+        "country": "IT",
+        "country_name": "Italy",
+        "material": "Greige linen shirting 135 g/m²",
+        "process": "Warping, air-jet weaving",
+        "status": "confirmed",
+        "note": "Loom allocation and yarn lot confirmed by the mill for this construction."
+      },
+      {
+        "order": 4,
+        "company_id": "teinturerie-des-vosges",
+        "role": "Processor — natural dyeing",
+        "country": "FR",
+        "country_name": "France",
+        "material": "Madder-dyed linen",
+        "process": "Scouring, mordanting, plant dyeing",
+        "status": "declared",
+        "note": "Dye plant origin stated by the dyehouse. No chain-of-custody certificate exists for the madder itself."
+      }
+    ]
+  },
+  {
+    "id": "chain-precast-panel",
+    "product_id": "recycled-precast-panel",
+    "sector": "construction",
+    "summary": "Five stages in which the same company appears twice — once as an aggregate processor, once as a precast manufacturer. Recycled content is declared per batch and backed by melt and crushing certificates.",
+    "steps": [
+      {
+        "order": 1,
+        "company_id": "granulat-jura",
+        "role": "Raw material producer",
+        "country": "CH",
+        "country_name": "Switzerland",
+        "material": "Graded limestone aggregate 4/16",
+        "process": "Extraction, crushing, washing",
+        "status": "verified",
+        "note": "CE marking under EN 12620. Quarry operates under a cantonal restoration plan agreed before extraction."
+      },
+      {
+        "order": 2,
+        "company_id": "metallwerk-schwaben",
+        "role": "Processor — metal",
+        "country": "DE",
+        "country_name": "Germany",
+        "material": "Recycled steel rebar",
+        "process": "EAF steel forming, cutting, bending",
+        "status": "verified",
+        "note": "Melt certificate supplied per coil. 94% scrap-based input, EN 1090 EXC3."
+      },
+      {
+        "order": 3,
+        "company_id": "betoncycle-rhein",
+        "role": "Processor — aggregate recovery",
+        "country": "DE",
+        "country_name": "Germany",
+        "material": "Certified recycled concrete aggregate",
+        "process": "Rubble sorting, impact crushing, certification",
+        "status": "verified",
+        "note": "Source demolition sites recorded per batch across the Basel-Freiburg corridor."
+      },
+      {
+        "order": 4,
+        "company_id": "betoncycle-rhein",
+        "role": "Manufacturer — precast",
+        "country": "DE",
+        "country_name": "Germany",
+        "material": "Precast wall panel C30/37",
+        "process": "Batching, casting, steam curing",
+        "status": "confirmed",
+        "note": "Recycled aggregate content measured at 62% for this batch. Binder is low-clinker but not yet certified for structural use."
+      },
+      {
+        "order": 5,
+        "company_id": "atelier-romand-construction",
+        "role": "Brand — contractor",
+        "country": "CH",
+        "country_name": "Switzerland",
+        "material": "Installed load-bearing wall",
+        "process": "Site assembly, material passport entry",
+        "status": "declared",
+        "note": "Panel recorded in the project material passport with its disassembly route. Not independently checked on site."
+      }
+    ]
+  },
+  {
+    "id": "chain-insulation-batt",
+    "product_id": "flax-insulation-batt",
+    "sector": "construction",
+    "summary": "Four stages turning an agricultural by-product into building fabric. The distribution stage is declared only, which is the weakest link in this chain.",
+    "steps": [
+      {
+        "order": 1,
+        "company_id": "lino-baltico",
+        "role": "Raw material producer",
+        "country": "LT",
+        "country_name": "Lithuania",
+        "material": "Flax tow",
+        "process": "Cultivation, dew retting, scutching",
+        "status": "verified",
+        "note": "Tow is the by-product of long line fibre production. Nothing leaves the site as waste."
+      },
+      {
+        "order": 2,
+        "company_id": "isolana-verde",
+        "role": "Manufacturer",
+        "country": "ES",
+        "country_name": "Spain",
+        "material": "Flax insulation batt 35 kg/m³",
+        "process": "Fibre opening, airlay forming, thermal bonding",
+        "status": "confirmed",
+        "note": "natureplus certification covers the binder system. Fibre origin confirmed against supplier delivery notes."
+      },
+      {
+        "order": 3,
+        "company_id": "holz-emmental",
+        "role": "Supplier — distribution",
+        "country": "CH",
+        "country_name": "Switzerland",
+        "material": "Stocked batts",
+        "process": "Regional stocking, order consolidation",
+        "status": "declared",
+        "note": "Batch identifiers are not currently carried through the merchant layer. Weakest link in this chain."
+      },
+      {
+        "order": 4,
+        "company_id": "atelier-romand-construction",
+        "role": "Brand — contractor",
+        "country": "CH",
+        "country_name": "Switzerland",
+        "material": "Installed wall insulation",
+        "process": "Timber frame installation, material passport entry",
+        "status": "declared",
+        "note": "Recorded in the project material passport as compostable at end of life."
+      }
+    ]
+  }
+]

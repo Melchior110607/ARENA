@@ -1,0 +1,128 @@
+[
+  {
+    "id": "rel-01",
+    "owner_id": "maison-vaudoise",
+    "company_id": "lino-baltico",
+    "status": "to_discover",
+    "status_since": "2026-07-30",
+    "first_seen": "2026-07-30",
+    "note": "Found through Filatura Brescia's network. Scoping a linen capsule for 2027."
+  },
+  {
+    "id": "rel-02",
+    "owner_id": "maison-vaudoise",
+    "company_id": "nordwolle-handel",
+    "status": "contacted",
+    "status_since": "2026-07-18",
+    "first_seen": "2026-07-16",
+    "note": "Sent a connection request after they published Responsible Wool lot documentation."
+  },
+  {
+    "id": "rel-03",
+    "owner_id": "maison-vaudoise",
+    "company_id": "tessitura-lario",
+    "status": "contacted",
+    "status_since": "2026-07-22",
+    "first_seen": "2026-07-20",
+    "note": "They reached out first. Capacity from October, which fits the spring programme."
+  },
+  {
+    "id": "rel-04",
+    "owner_id": "maison-vaudoise",
+    "company_id": "refibra-iberica",
+    "status": "connected",
+    "status_since": "2026-06-11",
+    "first_seen": "2026-05-29",
+    "note": "Samples of colour-sorted fibre received. Waiting on spinning trial results."
+  },
+  {
+    "id": "rel-05",
+    "owner_id": "maison-vaudoise",
+    "company_id": "atlas-cotton-collective",
+    "status": "in_discussion",
+    "status_since": "2026-05-28",
+    "first_seen": "2026-04-02",
+    "note": "Negotiating a two-year volume commitment in exchange for field-block separation."
+  },
+  {
+    "id": "rel-06",
+    "owner_id": "maison-vaudoise",
+    "company_id": "teinturerie-des-vosges",
+    "status": "evaluation",
+    "status_since": "2026-04-15",
+    "first_seen": "2026-03-30",
+    "note": "Third-party water audit being scoped jointly. Would move the dye stage to verified."
+  },
+  {
+    "id": "rel-07",
+    "owner_id": "maison-vaudoise",
+    "company_id": "filatura-brescia",
+    "status": "active_partner",
+    "status_since": "2025-11-03",
+    "first_seen": "2025-10-14",
+    "note": "Spins the full jersey and shirting programme. Single-origin lots since spring 2026."
+  },
+  {
+    "id": "rel-08",
+    "owner_id": "maison-vaudoise",
+    "company_id": "confeccoes-douro",
+    "status": "active_partner",
+    "status_since": "2025-09-19",
+    "first_seen": "2025-09-02",
+    "note": "Two dedicated cells. Takes 150-piece development runs alongside the core programme."
+  },
+  {
+    "id": "rel-09",
+    "owner_id": "atelier-romand-construction",
+    "company_id": "granulat-jura",
+    "status": "to_discover",
+    "status_since": "2026-08-01",
+    "first_seen": "2026-08-01",
+    "note": "Supplies BetonCycle. Worth understanding the quarry restoration plan directly."
+  },
+  {
+    "id": "rel-10",
+    "owner_id": "atelier-romand-construction",
+    "company_id": "vitrum-alpes",
+    "status": "contacted",
+    "status_since": "2026-07-28",
+    "first_seen": "2026-07-26",
+    "note": "Connection request sent about the demountable spacer system."
+  },
+  {
+    "id": "rel-11",
+    "owner_id": "atelier-romand-construction",
+    "company_id": "metallwerk-schwaben",
+    "status": "in_discussion",
+    "status_since": "2026-06-30",
+    "first_seen": "2026-06-12",
+    "note": "Melt certificates and EPDs reviewed. Discussing facade substructure for the Vaud project."
+  },
+  {
+    "id": "rel-12",
+    "owner_id": "atelier-romand-construction",
+    "company_id": "isolana-verde",
+    "status": "evaluation",
+    "status_since": "2026-05-12",
+    "first_seen": "2026-05-05",
+    "note": "Sample batts on site for moisture testing. Distribution traceability is the open question."
+  },
+  {
+    "id": "rel-13",
+    "owner_id": "atelier-romand-construction",
+    "company_id": "holz-emmental",
+    "status": "active_partner",
+    "status_since": "2024-03-08",
+    "first_seen": "2024-02-28",
+    "note": "Structural timber on every project since 2024. Parcel identifiers supplied as standard."
+  },
+  {
+    "id": "rel-14",
+    "owner_id": "atelier-romand-construction",
+    "company_id": "betoncycle-rhein",
+    "status": "active_partner",
+    "status_since": "2025-02-20",
+    "first_seen": "2025-02-11",
+    "note": "Precast on three projects. Batch-level recycled content reporting works as promised."
+  }
+]

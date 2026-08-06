@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-06T00:00:00Z",
+  "title": "Design System: Arena",
+  "extensions": {
+    "colorMeta": {
+      "signal": { "role": "primary", "displayName": "Signal", "canonical": "oklch(0.5 0.16 33)", "tonalRamp": ["oklch(0.2 0.1 33)", "oklch(0.3 0.13 33)", "oklch(0.4 0.15 33)", "oklch(0.5 0.16 33)", "oklch(0.6 0.15 34)", "oklch(0.7 0.12 36)", "oklch(0.82 0.07 38)", "oklch(0.93 0.03 40)"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "oklch(0.24 0.012 260)", "tonalRamp": ["oklch(0.15 0.01 260)", "oklch(0.24 0.012 260)", "oklch(0.36 0.014 260)", "oklch(0.46 0.02 255)", "oklch(0.62 0.015 255)", "oklch(0.76 0.015 250)", "oklch(0.885 0.006 110)", "oklch(0.965 0.004 110)"] },
+      "mill-white": { "role": "neutral", "displayName": "Mill White", "canonical": "oklch(0.965 0.004 110)", "tonalRamp": ["oklch(0.6 0.006 110)", "oklch(0.7 0.006 110)", "oklch(0.8 0.006 110)", "oklch(0.885 0.006 110)", "oklch(0.936 0.005 110)", "oklch(0.965 0.004 110)", "oklch(0.98 0.003 110)", "oklch(0.995 0.002 110)"] },
+      "steel": { "role": "tertiary", "displayName": "Steel (declared)", "canonical": "oklch(0.46 0.022 255)", "tonalRamp": ["oklch(0.2 0.02 255)", "oklch(0.3 0.022 255)", "oklch(0.4 0.022 255)", "oklch(0.46 0.022 255)", "oklch(0.58 0.02 253)", "oklch(0.7 0.018 252)", "oklch(0.82 0.015 250)", "oklch(0.93 0.01 250)"] },
+      "ochre": { "role": "tertiary", "displayName": "Ochre (confirmed)", "canonical": "oklch(0.5 0.1 78)", "tonalRamp": ["oklch(0.22 0.05 78)", "oklch(0.32 0.07 78)", "oklch(0.42 0.09 78)", "oklch(0.5 0.1 78)", "oklch(0.62 0.1 80)", "oklch(0.74 0.09 82)", "oklch(0.85 0.06 84)", "oklch(0.94 0.03 85)"] },
+      "seal-green": { "role": "tertiary", "displayName": "Seal Green (verified)", "canonical": "oklch(0.47 0.09 168)", "tonalRamp": ["oklch(0.2 0.05 168)", "oklch(0.3 0.07 168)", "oklch(0.4 0.08 168)", "oklch(0.47 0.09 168)", "oklch(0.6 0.09 166)", "oklch(0.72 0.08 165)", "oklch(0.84 0.05 165)", "oklch(0.93 0.025 165)"] },
+      "crimson": { "role": "tertiary", "displayName": "Crimson (destructive)", "canonical": "oklch(0.47 0.19 15)", "tonalRamp": ["oklch(0.2 0.1 15)", "oklch(0.3 0.14 15)", "oklch(0.4 0.17 15)", "oklch(0.47 0.19 15)", "oklch(0.58 0.17 15)", "oklch(0.7 0.13 15)", "oklch(0.82 0.08 15)", "oklch(0.93 0.03 15)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles, one per page." },
+      "body": { "displayName": "Body", "purpose": "App default, 0.875rem Archivo." },
+      "label": { "displayName": "Data label", "purpose": "Fragment Mono caps for values of record: spec labels, statuses, counts, table heads (.arena-data)." },
+      "nameplate": { "displayName": "Nameplate", "purpose": "ARENA wordmark only: expanded caps via wdth 125 (.arena-nameplate)." }
+    },
+    "shadows": [
+      { "name": "overlay", "value": "0 4px 12px rgba(15, 18, 23, 0.12)", "purpose": "Menus, popovers, dialogs only. In-flow elements cast nothing (The Print Has No Shadows Rule)." }
+    ],
+    "motion": [
+      { "name": "state-transition", "value": "150ms-250ms ease-out", "purpose": "Hover, open, selection. No page-load choreography; global prefers-reduced-motion clamp in globals.css." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one Signal-filled decision per view.",
+      "html": "<button class=\"ds-btn-primary\">Request connection</button>",
+      "css": ".ds-btn-primary { background: var(--primary, oklch(0.5 0.16 33)); color: oklch(0.985 0.005 90); height: 32px; padding: 0 10px; border: 1px solid transparent; border-radius: 4px; font-family: Archivo, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 150ms ease-out; } .ds-btn-primary:hover { background: color-mix(in oklch, oklch(0.5 0.16 33) 80%, transparent); } .ds-btn-primary:focus-visible { outline: none; border-color: oklch(0.5 0.16 33); box-shadow: 0 0 0 3px oklch(0.5 0.16 33 / 0.5); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "The workhorse secondary action.",
+      "html": "<button class=\"ds-btn-outline\">View chain</button>",
+      "css": ".ds-btn-outline { background: transparent; color: oklch(0.24 0.012 260); height: 32px; padding: 0 10px; border: 1px solid oklch(0.885 0.006 110); border-radius: 4px; font-family: Archivo, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 150ms ease-out; } .ds-btn-outline:hover { background: oklch(0.936 0.005 110); } .ds-btn-outline:focus-visible { outline: none; border-color: oklch(0.5 0.16 33); box-shadow: 0 0 0 3px oklch(0.5 0.16 33 / 0.5); }"
+    },
+    {
+      "name": "Chip of record",
+      "kind": "chip",
+      "refersTo": "badge-chip",
+      "description": "Default badge: certifications, categories, spec codes. Mono caps, stamped square.",
+      "html": "<span class=\"ds-chip\">Oeko-Tex 100</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; height: 20px; padding: 2px 6px; border: 1px solid oklch(0.885 0.006 110); border-radius: 2px; color: oklch(0.24 0.012 260); font-family: 'Fragment Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Search and form field with the darker field rule.",
+      "html": "<input class=\"ds-input\" placeholder=\"Search companies\" />",
+      "css": ".ds-input { height: 32px; width: 240px; padding: 4px 10px; background: transparent; border: 1px solid oklch(0.62 0.015 255); border-radius: 4px; color: oklch(0.24 0.012 260); font-family: Archivo, system-ui, sans-serif; font-size: 14px; } .ds-input::placeholder { color: oklch(0.46 0.022 255); } .ds-input:focus-visible { outline: none; border-color: oklch(0.5 0.16 33); box-shadow: 0 0 0 3px oklch(0.5 0.16 33 / 0.5); }"
+    },
+    {
+      "name": "Masthead nav item",
+      "kind": "nav",
+      "description": "Index-row item on the ink plate; active carries the plate-signal underline.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item\" href=\"#\">Home</a><a class=\"ds-nav-item is-active\" aria-current=\"page\" href=\"#\">Companies</a><a class=\"ds-nav-item\" href=\"#\">Products</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 24px; background: oklch(0.24 0.012 260); padding: 0 16px; } .ds-nav-item { position: relative; display: flex; align-items: center; height: 40px; color: oklch(0.76 0.015 250); font-family: Archivo, system-ui, sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.02em; text-decoration: none; transition: color 150ms ease-out; } .ds-nav-item:hover { color: oklch(0.955 0.004 110); } .ds-nav-item.is-active { color: oklch(0.955 0.004 110); } .ds-nav-item.is-active::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: oklch(0.64 0.16 36); } .ds-nav-item:focus-visible { outline: 2px solid oklch(0.955 0.004 110); outline-offset: -2px; }"
+    },
+    {
+      "name": "Verification seals",
+      "kind": "custom",
+      "description": "THE signature: declared (dashed ring), confirmed (ringed check), verified (sealed disc). Geometry changes before hue.",
+      "html": "<div class=\"ds-seals\"><span class=\"ds-seal\"><svg viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><circle cx=\"10\" cy=\"10\" r=\"6.5\" fill=\"none\" stroke=\"oklch(0.46 0.022 255)\" stroke-width=\"1.8\" stroke-dasharray=\"2.6 2.4\" stroke-linecap=\"round\"/></svg><em>Declared</em></span><span class=\"ds-seal\"><svg viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><circle cx=\"10\" cy=\"10\" r=\"6.5\" fill=\"none\" stroke=\"oklch(0.5 0.1 78)\" stroke-width=\"1.8\"/><path d=\"M6.9 10.2l2.1 2.1 4.1-4.4\" fill=\"none\" stroke=\"oklch(0.5 0.1 78)\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><em>Confirmed</em></span><span class=\"ds-seal\"><svg viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><circle cx=\"10\" cy=\"10\" r=\"9\" fill=\"none\" stroke=\"oklch(0.47 0.09 168)\" stroke-width=\"1.4\"/><circle cx=\"10\" cy=\"10\" r=\"6.2\" fill=\"oklch(0.47 0.09 168)\"/><path d=\"M7.2 10.2l1.9 1.9 3.7-4\" fill=\"none\" stroke=\"oklch(0.995 0.002 110)\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><em>Verified</em></span></div>",
+      "css": ".ds-seals { display: flex; gap: 24px; align-items: center; } .ds-seal { display: inline-flex; align-items: center; gap: 6px; } .ds-seal em { font-family: 'Fragment Mono', ui-monospace, monospace; font-style: normal; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.24 0.012 260); }"
+    },
+    {
+      "name": "Monogram nameplate",
+      "kind": "custom",
+      "description": "Company mark: tone plate, fine inner rule, monogram in the tone's drawing ink.",
+      "html": "<svg viewBox=\"0 0 40 40\" width=\"40\" height=\"40\" role=\"img\" aria-label=\"MV monogram\"><rect width=\"40\" height=\"40\" fill=\"oklch(0.89 0.025 230)\"/><rect x=\"2.5\" y=\"2.5\" width=\"35\" height=\"35\" fill=\"none\" stroke=\"oklch(0.4 0.07 240)\" stroke-opacity=\"0.45\" stroke-width=\"1\"/><text x=\"20\" y=\"20\" text-anchor=\"middle\" dominant-baseline=\"central\" font-family=\"Archivo, system-ui, sans-serif\" font-weight=\"600\" font-size=\"16\" letter-spacing=\"0.04em\" fill=\"oklch(0.4 0.07 240)\">MV</text></svg>",
+      "css": ""
+    }
+  ],
+  "narrative": {
+    "northStar": "The Works Catalogue",
+    "overview": "Arena is set in the graphic world of the mid-century European machine-works catalogue — cool coated paper, near-black ink, a strict grid, one vermilion signal colour, and technical diagrams where other publications would use photographs. It is a working tool first: scanability, density and familiar affordances outrank expression, and the brand lives in precise details. The product's honesty is the design's honesty: every visual is drawn evidence, every status is carried by geometry before hue, and fictional data is disclosed in the first pixels of every page.",
+    "keyCharacteristics": [
+      "Cool mill-white ground with near-white plates; ink masthead and footer bookend every page",
+      "One vermilion signal for action and selection; everything else is ink, steel and rules",
+      "A single grotesque (Archivo) at all sizes, with Fragment Mono reserved for data",
+      "All imagery drawn as SVG line work — there is no photography and never will be",
+      "Severe but not brutalist: 4px corners, real borders, flat surfaces, tabular figures"
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Vermilion marks action and selection, nothing else. If a screen is more than ~10% Signal, elements are claiming decisions they cannot make.", "section": "colors" },
+      { "name": "The Two Reds Rule", "body": "Signal (hue 33) acts; Crimson (hue 15) destroys, and only ever as tint + text. They never appear as visual peers on one surface.", "section": "colors" },
+      { "name": "The Geometry Before Hue Rule", "body": "No status may be encoded by colour alone. The mark, label or position changes first; the hue reinforces.", "section": "colors" },
+      { "name": "The Mono Is Measurement Rule", "body": "Fragment Mono appears only where a value is data — numbers, codes, statuses, labels of record. Never as a decorative technical voice for prose.", "section": "typography" },
+      { "name": "The No Eyebrow Rule", "body": "Headings carry their own weight. No kicker or label sits above a heading.", "section": "typography" },
+      { "name": "The Print Has No Shadows Rule", "body": "If an element is in the page flow, it casts nothing. Only overlays float.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do route every colour through the semantic tokens in globals.css; raw hex in a component is a defect.",
+      "Do pair every status with the seal geometry or an explicit text label; hue is reinforcement, never the message.",
+      "Do use .arena-data for labels of record and tabular figures for any column of numbers.",
+      "Do keep one Signal-filled action per view and let outline/ghost carry the rest.",
+      "Do design list rows and tables before reaching for card grids; the catalogue is a register, not a mosaic.",
+      "Do keep both themes true: every new pair ≥4.5:1 (text) or ≥3:1 (affordance), checked in light and dark.",
+      "Do respect the motion budget: 150–250ms state transitions with the global reduced-motion clamp; no page-load choreography."
+    ],
+    "donts": [
+      "Don't use photography, stock art, gradients-as-imagery, or emoji icons — evidence is drawn.",
+      "Don't ship violet/blue gradients, glassmorphism, Inter, cream+serif+terracotta, near-black+acid-accent, or broadsheet hairlines with zero radius.",
+      "Don't put a kicker/eyebrow above any heading, or number sections unless the sequence itself is information.",
+      "Don't repeat one identical card grid across pages — each surface derives its structure from its own data shape.",
+      "Don't touch frontend/src/app/globals.css or frontend/src/components/ui/** from a surface agent; request foundation changes instead.",
+      "Don't dress declared up as verified — visual weight must track the verification gradient, never invert it."
+    ]
+  }
+}

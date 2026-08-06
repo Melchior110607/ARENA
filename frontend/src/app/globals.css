@@ -1,0 +1,285 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * ARENA — design tokens.
+ *
+ * World: the mid-century European industrial works catalogue (Sulzer, Geigy,
+ * Brown Boveri graphic programs) rebuilt as a working sourcing tool. Paper is
+ * cool coated stock, ink is near-black, one vermilion signal colour carries
+ * action and selection, and all "imagery" is drawn: monogram nameplates,
+ * material swatch diagrams, verification seals.
+ *
+ * Named palette (light):
+ *   Ink        #1C1F25  foreground, masthead plate
+ *   Mill White #F3F4F1  page ground
+ *   Signal     #AB331C  primary action, active state, focus
+ *   Steel      #505964  secondary text, structure
+ *   Seal       #106B51  "verified" status
+ *   Ochre      #825B0C  "confirmed" status
+ *
+ * Every colour ships as a semantic token; components never use raw hex.
+ * Statuses are never carried by colour alone — the StatusSeal marks differ
+ * in geometry (dashed ring / ringed check / sealed disc) before they differ
+ * in hue.
+ */
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: var(--font-sans);
+    --font-mono: var(--font-mono);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+
+    /* Arena: the dark masthead/footer plate. */
+    --color-plate: var(--plate);
+    --color-plate-foreground: var(--plate-foreground);
+    --color-plate-muted: var(--plate-muted);
+    --color-plate-border: var(--plate-border);
+    --color-plate-signal: var(--plate-signal);
+
+    /* Arena: traceability gradient. Geometry first, hue second. */
+    --color-status-declared: var(--status-declared);
+    --color-status-confirmed: var(--status-confirmed);
+    --color-status-verified: var(--status-verified);
+
+    /* Arena: the 0–5 tone index used by company monograms and product
+       swatches (logo.tone / visual.tone). fill = plate ground,
+       deep = drawing ink on that ground. Every deep/fill pair ≥ 4.5:1. */
+    --color-tone-0: var(--tone-0);
+    --color-tone-0-deep: var(--tone-0-deep);
+    --color-tone-1: var(--tone-1);
+    --color-tone-1-deep: var(--tone-1-deep);
+    --color-tone-2: var(--tone-2);
+    --color-tone-2-deep: var(--tone-2-deep);
+    --color-tone-3: var(--tone-3);
+    --color-tone-3-deep: var(--tone-3-deep);
+    --color-tone-4: var(--tone-4);
+    --color-tone-4-deep: var(--tone-4-deep);
+    --color-tone-5: var(--tone-5);
+    --color-tone-5-deep: var(--tone-5-deep);
+
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    color-scheme: light;
+
+    /* Ground and ink */
+    --background: oklch(0.965 0.004 110);          /* Mill White */
+    --foreground: oklch(0.24 0.012 260);           /* Ink */
+    --card: oklch(0.995 0.002 110);                /* plate: near-white stock */
+    --card-foreground: oklch(0.24 0.012 260);
+    --popover: oklch(0.995 0.002 110);
+    --popover-foreground: oklch(0.24 0.012 260);
+
+    /* Signal — the one accent */
+    --primary: oklch(0.5 0.16 33);                 /* Signal vermilion */
+    --primary-foreground: oklch(0.985 0.005 90);
+    --secondary: oklch(0.93 0.006 110);            /* quiet plate tint */
+    --secondary-foreground: oklch(0.24 0.012 260);
+    --muted: oklch(0.936 0.005 110);
+    --muted-foreground: oklch(0.46 0.022 255);     /* Steel */
+    --accent: oklch(0.93 0.006 110);
+    --accent-foreground: oklch(0.24 0.012 260);
+    --destructive: oklch(0.47 0.19 15);  /* crimson — kept apart from Signal (hue 33) */
+
+    --border: oklch(0.885 0.006 110);
+    --input: oklch(0.62 0.015 255);      /* field rule at ≥3:1 against ground */
+    --ring: oklch(0.5 0.16 33);
+
+    /* Chart hues = the tone drawing inks; industrial, not neon. */
+    --chart-1: oklch(0.48 0.14 33);
+    --chart-2: oklch(0.4 0.07 240);
+    --chart-3: oklch(0.42 0.08 168);
+    --chart-4: oklch(0.46 0.09 78);
+    --chart-5: oklch(0.4 0.045 250);
+
+    --radius: 0.25rem;
+
+    /* Masthead / footer plate */
+    --plate: oklch(0.24 0.012 260);
+    --plate-foreground: oklch(0.955 0.004 110);
+    --plate-muted: oklch(0.76 0.015 250);
+    --plate-border: oklch(0.36 0.014 260);
+    --plate-signal: oklch(0.64 0.16 36);   /* signal tuned for the dark plate */
+
+    /* Traceability gradient */
+    --status-declared: oklch(0.46 0.022 255);      /* Steel — stated only */
+    --status-confirmed: oklch(0.5 0.1 78);         /* Ochre — corroborated */
+    --status-verified: oklch(0.47 0.09 168);       /* Seal — third-party */
+
+    /* Tone index 0–5 */
+    --tone-0: oklch(0.88 0.015 250);
+    --tone-0-deep: oklch(0.4 0.045 250);
+    --tone-1: oklch(0.9 0.035 40);
+    --tone-1-deep: oklch(0.48 0.14 33);
+    --tone-2: oklch(0.91 0.045 85);
+    --tone-2-deep: oklch(0.46 0.09 78);
+    --tone-3: oklch(0.9 0.03 165);
+    --tone-3-deep: oklch(0.42 0.08 168);
+    --tone-4: oklch(0.89 0.025 230);
+    --tone-4-deep: oklch(0.4 0.07 240);
+    --tone-5: oklch(0.9 0.025 55);
+    --tone-5-deep: oklch(0.42 0.06 50);
+
+    --sidebar: oklch(0.945 0.005 110);
+    --sidebar-foreground: oklch(0.24 0.012 260);
+    --sidebar-primary: oklch(0.5 0.16 33);
+    --sidebar-primary-foreground: oklch(0.985 0.005 90);
+    --sidebar-accent: oklch(0.9 0.006 110);
+    --sidebar-accent-foreground: oklch(0.24 0.012 260);
+    --sidebar-border: oklch(0.885 0.006 110);
+    --sidebar-ring: oklch(0.5 0.16 33);
+}
+
+.dark {
+    color-scheme: dark;
+
+    --background: oklch(0.205 0.01 260);
+    --foreground: oklch(0.95 0.004 110);
+    --card: oklch(0.245 0.01 260);
+    --card-foreground: oklch(0.95 0.004 110);
+    --popover: oklch(0.245 0.01 260);
+    --popover-foreground: oklch(0.95 0.004 110);
+
+    --primary: oklch(0.68 0.15 38);
+    --primary-foreground: oklch(0.185 0.01 260);
+    --secondary: oklch(0.29 0.01 260);
+    --secondary-foreground: oklch(0.95 0.004 110);
+    --muted: oklch(0.285 0.01 260);
+    --muted-foreground: oklch(0.72 0.015 250);
+    --accent: oklch(0.29 0.01 260);
+    --accent-foreground: oklch(0.95 0.004 110);
+    --destructive: oklch(0.68 0.16 15);
+
+    --border: oklch(1 0 0 / 12%);
+    --input: oklch(1 0 0 / 34%);
+    --ring: oklch(0.68 0.15 38);
+
+    --chart-1: oklch(0.68 0.15 38);
+    --chart-2: oklch(0.68 0.09 240);
+    --chart-3: oklch(0.72 0.1 165);
+    --chart-4: oklch(0.78 0.1 82);
+    --chart-5: oklch(0.74 0.02 250);
+
+    --plate: oklch(0.165 0.01 260);
+    --plate-foreground: oklch(0.95 0.004 110);
+    --plate-muted: oklch(0.74 0.015 250);
+    --plate-border: oklch(0.33 0.012 260);
+    --plate-signal: oklch(0.68 0.15 38);
+
+    --status-declared: oklch(0.74 0.02 250);
+    --status-confirmed: oklch(0.78 0.1 82);
+    --status-verified: oklch(0.75 0.09 165);
+
+    --tone-0: oklch(0.31 0.02 250);
+    --tone-0-deep: oklch(0.78 0.03 250);
+    --tone-1: oklch(0.3 0.04 38);
+    --tone-1-deep: oklch(0.76 0.11 40);
+    --tone-2: oklch(0.31 0.04 82);
+    --tone-2-deep: oklch(0.8 0.09 85);
+    --tone-3: oklch(0.3 0.03 168);
+    --tone-3-deep: oklch(0.78 0.08 165);
+    --tone-4: oklch(0.3 0.03 240);
+    --tone-4-deep: oklch(0.77 0.06 235);
+    --tone-5: oklch(0.3 0.03 55);
+    --tone-5-deep: oklch(0.78 0.05 60);
+
+    --sidebar: oklch(0.245 0.01 260);
+    --sidebar-foreground: oklch(0.95 0.004 110);
+    --sidebar-primary: oklch(0.68 0.15 38);
+    --sidebar-primary-foreground: oklch(0.185 0.01 260);
+    --sidebar-accent: oklch(0.29 0.01 260);
+    --sidebar-accent-foreground: oklch(0.95 0.004 110);
+    --sidebar-border: oklch(1 0 0 / 12%);
+    --sidebar-ring: oklch(0.68 0.15 38);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
+
+  ::selection {
+    background: oklch(0.5 0.16 33 / 18%);
+    }
+
+  /* Data is set in tabular figures wherever it lines up. */
+  table,
+  [data-slot="table"] {
+    font-variant-numeric: tabular-nums;
+    }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+      }
+    }
+}
+
+@layer utilities {
+  /* Catalogue data label: article numbers, spec values, statuses, counts. */
+  .arena-data {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    }
+
+  /* The expanded-caps nameplate treatment of the wordmark. */
+  .arena-nameplate {
+    font-stretch: 125%;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    }
+}
