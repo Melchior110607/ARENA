@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { ConnectButton, InterestButton } from "@/components/arena/actions";
-import { AddressRail } from "@/components/arena/address-rail";
+import { AddressRail, addressesReader } from "@/components/arena/address-rail";
 import { MaterialSwatch } from "@/components/arena/material-swatch";
 import { Monogram } from "@/components/arena/monogram";
 import { daysUntil, todayIso } from "@/components/arena/registry";
@@ -42,6 +42,7 @@ export function NoticeRow({
   reasons?: string[];
 }) {
   const own = notice.author_id === viewer.id;
+  const addressed = addressesReader(notice.addressed_to, viewer.type);
   const interested = notice.interested_by.includes(viewer.id);
   const interestCount = notice.interested_by.length;
   const deadlineDays = notice.deadline ? daysUntil(notice.deadline, todayIso()) : null;
@@ -146,11 +147,16 @@ export function NoticeRow({
             </p>
           ) : (
             <>
-              <InterestButton
-                noticeId={notice.id}
-                asCompanyId={viewer.id}
-                interested={interested}
-              />
+              {/* Interest answers a call. If the notice was not addressed to this
+                  reader's kind of company, there is nothing here to answer —
+                  connecting stays open, because that is a different intent. */}
+              {addressed && (
+                <InterestButton
+                  noticeId={notice.id}
+                  asCompanyId={viewer.id}
+                  interested={interested}
+                />
+              )}
               {author && (
                 <ConnectButton
                   fromId={viewer.id}

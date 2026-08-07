@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ConnectButton, InterestButton } from "@/components/arena/actions";
-import { AddressRail } from "@/components/arena/address-rail";
+import { AddressRail, addressesReader } from "@/components/arena/address-rail";
 import { ChainLocator } from "@/components/arena/chain-locator";
 import { MaterialSwatch } from "@/components/arena/material-swatch";
 import { Monogram } from "@/components/arena/monogram";
@@ -213,11 +213,16 @@ export default async function NoticePage({ params }: { params: Promise<{ id: str
             </p>
           ) : (
             <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
-              <InterestButton
-                noticeId={notice.id}
-                asCompanyId={viewer.id}
-                interested={notice.interested_by.includes(viewer.id)}
-              />
+              {/* Interest answers a call. A notice addressed to other kinds of
+                  company has nothing here for this reader to answer; connecting
+                  stays open, because that is a different intent. */}
+              {addressesReader(notice.addressed_to, viewer.type) && (
+                <InterestButton
+                  noticeId={notice.id}
+                  asCompanyId={viewer.id}
+                  interested={notice.interested_by.includes(viewer.id)}
+                />
+              )}
               {author && (
                 <ConnectButton
                   fromId={viewer.id}
