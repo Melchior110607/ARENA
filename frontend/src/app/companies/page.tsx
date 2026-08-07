@@ -166,10 +166,6 @@ export default async function CompaniesPage({
     <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Companies</h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          The register of {total} companies across textile and construction. Filter by where
-          they stand in the chain, what they can make, and what they can prove.
-        </p>
       </header>
 
       <ChainRail counts={stageCounts} active={activeStage} hrefFor={railHrefs} />

@@ -63,6 +63,12 @@ cd frontend && npm run dev -- -p 3100
 cd frontend && npm run lint && npx tsc --noEmit
 ```
 
+## Git — ne pas commiter
+
+**Ne jamais créer de commit sans demande explicite de l'utilisateur.** Laisser les modifications
+dans l'arbre de travail ; c'est lui qui décide quand et quoi commiter. Cela vaut aussi pour `git add`,
+`git push`, les tags et les branches.
+
 ## Architecture
 
 ```

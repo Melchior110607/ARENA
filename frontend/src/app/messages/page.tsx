@@ -164,11 +164,6 @@ export default async function MessagesPage({
         <h1 className="text-[2rem] leading-[1.15] font-semibold tracking-[-0.01em]">
           Messages
         </h1>
-        <p className="max-w-[65ch] text-sm leading-relaxed text-muted-foreground">
-          Correspondence between {personaName} and its counterparties. Every thread is
-          filed under the record that started it — a company, a product, or an open
-          notice.
-        </p>
       </header>
 
       {sorted.length === 0 ? (

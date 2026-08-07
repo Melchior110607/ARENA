@@ -132,10 +132,6 @@ export default async function ProductsPage({
     <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Products</h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          The catalogue of {total} articles, drawn as material sections — no photography,
-          only what can be specified: material, origin, certification.
-        </p>
       </header>
 
       <div className="lg:grid lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-10">

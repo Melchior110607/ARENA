@@ -132,12 +132,6 @@ export default async function ConnectionsPage() {
         <h1 className="text-[2rem] leading-[1.15] font-semibold tracking-[-0.01em]">
           Connections
         </h1>
-        <p className="max-w-[65ch] text-sm leading-relaxed text-muted-foreground">
-          The working register of {personaName}: requests to decide, requests awaiting
-          an answer, and the connected network. Every request carries the record it
-          starts from — a company, an article, a notice — and accepting one opens a
-          conversation seeded with its note. Connected means you are already talking.
-        </p>
         <p className="arena-data text-muted-foreground">
           {view.incoming.length} received · {view.outgoing.length} sent ·{" "}
           {view.accepted.length} connected · {suggestions.length} suggested

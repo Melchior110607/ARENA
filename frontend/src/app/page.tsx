@@ -81,11 +81,6 @@ export default async function RootPage() {
           {noticeCount} notices · viewing as {me.name}
         </p>
       </div>
-      <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-        Needs and offers posted to the register. Every notice is addressed to the
-        company types that can answer it — the rail beside each one shows whether
-        that includes you.
-      </p>
 
       <div className="mt-6">
         <FloorComposer author={me} products={ownProducts} />
