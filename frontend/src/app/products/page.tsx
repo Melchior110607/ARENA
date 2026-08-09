@@ -131,7 +131,7 @@ export default async function ProductsPage({
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Products</h1>
+        <h1 className="text-[2rem] leading-[1.15] font-semibold tracking-[-0.01em]">Products</h1>
       </header>
 
       <div className="lg:grid lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-10">

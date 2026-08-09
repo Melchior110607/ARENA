@@ -165,7 +165,7 @@ export default async function CompaniesPage({
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Companies</h1>
+        <h1 className="text-[2rem] leading-[1.15] font-semibold tracking-[-0.01em]">Companies</h1>
       </header>
 
       <ChainRail counts={stageCounts} active={activeStage} hrefFor={railHrefs} />
