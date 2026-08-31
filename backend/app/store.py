@@ -109,6 +109,47 @@ def personas() -> list[dict[str, Any]]:
 
 
 # --------------------------------------------------------------------------- #
+# Respect ecosystem membership — confidential identity masking
+# --------------------------------------------------------------------------- #
+
+
+def _identity_disclosed(target: dict[str, Any], viewer_id: str | None) -> bool:
+    """A confidential member's identity is visible to itself and to anyone it
+    holds an accepted connection with. Everyone else — including a signed-out
+    visitor — sees the anonymous identity. What stays visible regardless (type,
+    sector, country, score, certifications) is what makes requesting an
+    introduction worthwhile in the first place."""
+    if not target.get("confidential"):
+        return True
+    if viewer_id is None:
+        return False
+    if viewer_id == target["id"]:
+        return True
+    return viewer_id in _connected_ids(target["id"])
+
+
+def mask_company(target: dict[str, Any], viewer_id: str | None) -> dict[str, Any]:
+    """Company record as this viewer is entitled to see it. Identity fields are
+    replaced by the anonymous placeholder when disclosure has not been earned;
+    everything else — capabilities, score, certifications — is untouched."""
+    disclosed = _identity_disclosed(target, viewer_id)
+    if disclosed:
+        return {**target, "identity_disclosed": True}
+    return {
+        **target,
+        "name": target["anonymous_label"] or "Confidential member",
+        "logo": {"monogram": "··", "tone": target["logo"]["tone"]},
+        "city": "",
+        "website": "",
+        "identity_disclosed": False,
+    }
+
+
+def mask_companies(targets: list[dict[str, Any]], viewer_id: str | None) -> list[dict[str, Any]]:
+    return [mask_company(c, viewer_id) for c in targets]
+
+
+# --------------------------------------------------------------------------- #
 # Filtering
 # --------------------------------------------------------------------------- #
 
@@ -127,6 +168,7 @@ def filter_companies(
     product_type: str | None = None,
     material: str | None = None,
     certification: str | None = None,
+    min_score: int | None = None,
     q: str | None = None,
 ) -> list[dict[str, Any]]:
     results = companies
@@ -145,6 +187,8 @@ def filter_companies(
         results = [c for c in results if material in c["capabilities"]["materials"]]
     if certification:
         results = [c for c in results if certification in c["capabilities"]["certifications"]]
+    if min_score is not None:
+        results = [c for c in results if c["rse_score"] >= min_score]
     if q:
         results = [
             c
@@ -216,6 +260,23 @@ def _facet(counter: Counter[str], labels: dict[str, str] | None = None) -> list[
     ]
 
 
+SCORE_BANDS = (80, 70, 60)
+
+
+def _score_band_facet() -> list[dict[str, Any]]:
+    """Live counts per RSE score threshold — a filter reads as 'this many
+    companies score at or above X', so counts are cumulative rather than
+    partitioned into buckets."""
+    return [
+        {
+            "value": str(threshold),
+            "label": f"{threshold}+",
+            "count": sum(1 for c in companies if c["rse_score"] >= threshold),
+        }
+        for threshold in SCORE_BANDS
+    ]
+
+
 def facets() -> dict[str, Any]:
     country_labels = {c["country"]: c["country_name"] for c in companies}
     country_labels.update({p["country"]: p["country_name"] for p in products})
@@ -223,6 +284,7 @@ def facets() -> dict[str, Any]:
 
     return {
         "company_types": _facet(Counter(c["type"] for c in companies), COMPANY_TYPE_LABELS),
+        "score_bands": _score_band_facet(),
         "sectors": _facet(Counter(c["sector"] for c in companies), SECTOR_LABELS),
         "countries": _facet(Counter(c["country"] for c in companies), country_labels),
         "chain_positions": _facet(

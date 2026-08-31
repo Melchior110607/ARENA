@@ -90,6 +90,22 @@ class Company(BaseModel):
     capabilities: Capabilities
     connections: list[str]
 
+    # --- Respect ecosystem membership -------------------------------------
+    # Arena is the network layer of the Respect ecosystem: every member arrives
+    # already vetted by Respect-Suppliers. That premise is data, not copy.
+    verified_since: str = ""
+    # RSE score out of 100 (EcoVadis convention). Fictional, like everything.
+    rse_score: int = 0
+    # A confidential member's identity (name, monogram, city, website) is
+    # masked until the viewer holds an accepted connection with it. What stays
+    # visible — type, sector, country, score, certifications — is what makes
+    # requesting an introduction worthwhile.
+    confidential: bool = False
+    anonymous_label: str = ""
+    # Set by the serializer for the requesting viewer: false means this payload
+    # carries the anonymous identity and the UI should say so.
+    identity_disclosed: bool = True
+
 
 class Spec(BaseModel):
     label: str
@@ -285,6 +301,7 @@ class Facets(BaseModel):
     """Live counts so filter controls can show what a choice would yield."""
 
     company_types: list[FacetValue]
+    score_bands: list[FacetValue]
     sectors: list[FacetValue]
     countries: list[FacetValue]
     chain_positions: list[FacetValue]

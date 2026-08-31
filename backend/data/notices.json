@@ -223,5 +223,20 @@
     "product_id": "flax-insulation-batt",
     "posted_at": "2026-07-06",
     "interested_by": []
+  },
+  {
+    "id": "notice-16",
+    "author_id": "confidential-textile-01",
+    "kind": "need",
+    "title": "Brands sourcing certified piece dyeing beyond a single relationship",
+    "body": "We dye and finish for a small number of brands today and want to diversify without unsettling those relationships. Looking for brands running repeat colour programmes who value a dyehouse chosen for capability and score rather than referral.",
+    "addressed_to": ["brand", "manufacturer"],
+    "sector": "textile",
+    "region": "Southern Europe",
+    "skills": ["Reactive dyeing", "Colour lot continuity", "GOTS certified"],
+    "deadline": "2026-10-31",
+    "product_id": null,
+    "posted_at": "2026-08-05",
+    "interested_by": []
   }
 ]

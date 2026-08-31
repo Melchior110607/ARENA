@@ -20,6 +20,16 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [],
   },
+
+  // Browser-side API calls (src/lib/api.ts, when window is defined) go through
+  // this same-origin proxy instead of a public backend URL baked into the
+  // client bundle at build time. Resolved at request time, so it survives a
+  // tunnelled/shared deployment without a rebuild, and needs no CORS config
+  // since the request never leaves the frontend's own origin.
+  async rewrites() {
+    const target = process.env.INTERNAL_API_URL ?? "http://backend:8000";
+    return [{ source: "/api-proxy/:path*", destination: `${target}/:path*` }];
+  },
 };
 
 export default nextConfig;

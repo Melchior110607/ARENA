@@ -36,9 +36,11 @@ export default async function NoticePage({ params }: { params: Promise<{ id: str
     throw error;
   }
 
-  const [personaId, companies, productDetail] = await Promise.all([
-    getPersonaId(),
-    getCompanies(),
+  const personaId = await getPersonaId();
+  const viewerId = isVisitor(personaId) ? undefined : personaId;
+
+  const [companies, productDetail] = await Promise.all([
+    getCompanies({ as: viewerId }),
     notice.product_id ? getProduct(notice.product_id).catch(() => null) : null,
   ]);
 

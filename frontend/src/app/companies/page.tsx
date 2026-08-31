@@ -13,6 +13,8 @@ import { Monogram } from "@/components/arena/monogram";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getCompanies, getFacets } from "@/lib/api";
+import { isVisitor } from "@/lib/persona";
+import { getPersonaId } from "@/lib/persona.server";
 import {
   CHAIN_POSITION_LABELS,
   CHAIN_POSITION_ORDER,
@@ -35,6 +37,7 @@ const FILTER_PARAMS = [
   "product_type",
   "material",
   "certification",
+  "min_score",
   "q",
 ] as const;
 
@@ -100,11 +103,22 @@ export default async function CompaniesPage({
     ? (current.chain_position as ChainPosition)
     : undefined;
 
+  /* Who is reading — governs whether a confidential company's identity is
+     disclosed in the results. `current` stays string-only for URL building;
+     the API query needs `min_score` as a number. */
+  const personaId = await getPersonaId();
+  const viewerId = isVisitor(personaId) ? undefined : personaId;
+  const apiFilters = {
+    ...current,
+    min_score: current.min_score ? Number(current.min_score) : undefined,
+    as: viewerId,
+  };
+
   const [companies, stageBaseOrNull, facets] = await Promise.all([
-    getCompanies(current),
+    getCompanies(apiFilters),
     // The rail counts answer "who stands at each stage under my other
     // filters?" — so they come from the same query minus the stage itself.
-    activeStage ? getCompanies({ ...current, chain_position: undefined }) : null,
+    activeStage ? getCompanies({ ...apiFilters, chain_position: undefined }) : null,
     getFacets(),
   ]);
   const stageBase = stageBaseOrNull ?? companies;
@@ -125,6 +139,7 @@ export default async function CompaniesPage({
     { param: "sector", label: "Sector", values: facets.sectors },
     { param: "type", label: "Company type", values: facets.company_types },
     { param: "country", label: "Country", values: facets.countries },
+    { param: "min_score", label: "RSE score", values: facets.score_bands },
     { param: "product_type", label: "Product type", values: facets.product_types, collapsed: true },
     { param: "material", label: "Material", values: facets.materials, collapsed: true },
     {

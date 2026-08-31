@@ -77,6 +77,17 @@ export interface Company {
   regions_served: string[];
   capabilities: Capabilities;
   connections: string[];
+
+  /* --- Respect ecosystem membership --- */
+  /** "2024-03" — every member arrives already vetted by Respect-Suppliers. */
+  verified_since: string;
+  /** RSE score out of 100 (EcoVadis convention). Fictional. */
+  rse_score: number;
+  /** A confidential member's identity is masked until the viewer holds an accepted connection. */
+  confidential: boolean;
+  anonymous_label: string;
+  /** False means this payload carries the anonymous identity, not the real one. */
+  identity_disclosed: boolean;
 }
 
 export interface Spec {
@@ -241,6 +252,8 @@ export interface FacetValue {
 
 export interface Facets {
   company_types: FacetValue[];
+  /** Cumulative RSE score thresholds — "80+" counts companies scoring 80 or above. */
+  score_bands: FacetValue[];
   sectors: FacetValue[];
   countries: FacetValue[];
   chain_positions: FacetValue[];

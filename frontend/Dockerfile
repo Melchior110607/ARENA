@@ -14,13 +14,10 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Baked into the client bundle at build time: this is the URL the *browser* uses,
-# so it must be the published host port, not the compose service name.
-ARG NEXT_PUBLIC_API_URL=http://localhost:8100
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-
-# Fonts are downloaded here by next/font and self-hosted in the output, which is
-# what lets the running container work with no internet access.
+# No build-time API URL to bake in: the browser calls a same-origin proxy path
+# (/api-proxy/..., see next.config.ts) that is rewritten to INTERNAL_API_URL at
+# request time. Fonts are downloaded here by next/font and self-hosted in the
+# output, which is what lets the running container work with no internet access.
 RUN npm run build
 
 # ---------- runtime ----------

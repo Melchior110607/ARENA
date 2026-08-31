@@ -23,16 +23,15 @@ services:
   frontend:
     build:
       context: ./frontend
-      args:
-        # Baked into the client bundle: the browser reaches the backend on the host.
-        NEXT_PUBLIC_API_URL: http://localhost:8100
     container_name: arena-frontend
     ports:
       - "3100:3000"
     environment:
-      # Read at request time: server components reach the backend over the compose network.
+      # Read at request time — both server components and the /api-proxy rewrite
+      # (next.config.ts) reach the backend over the compose network this way.
+      # The browser never calls the backend directly, so no public URL needs to
+      # be baked into the client bundle and no CORS configuration is needed.
       INTERNAL_API_URL: http://backend:8000
-      NEXT_PUBLIC_API_URL: http://localhost:8100
     depends_on:
       backend:
         condition: service_healthy

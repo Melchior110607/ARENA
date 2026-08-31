@@ -92,7 +92,7 @@ export default async function ConnectionsPage() {
   if (personaId === null) redirect("/");
   const [view, companies, products] = await Promise.all([
     getConnections(personaId),
-    getCompanies(),
+    getCompanies({ as: personaId }),
     getProducts(),
   ]);
 

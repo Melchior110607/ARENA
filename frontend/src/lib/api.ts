@@ -1,11 +1,13 @@
 /**
  * Typed client for the Arena API.
  *
- * Two base URLs, on purpose:
+ * Two paths, on purpose:
  *  - server components run inside the compose network and reach the container
  *    directly (`INTERNAL_API_URL`, e.g. http://backend:8000);
- *  - the browser reaches the published port (`NEXT_PUBLIC_API_URL`,
- *    e.g. http://localhost:8100) with CORS allowed on the FastAPI side.
+ *  - the browser calls a same-origin proxy path (`/api-proxy/...`), which
+ *    `next.config.ts` rewrites to the backend at request time. This means no
+ *    public backend URL is ever baked into the client bundle, and no CORS
+ *    configuration is needed — the browser never leaves the frontend's origin.
  *
  * Both paths are real HTTP calls — open the network tab during a demo and you
  * will see them.
@@ -34,7 +36,9 @@ export function apiBase(): string {
   if (typeof window === "undefined") {
     return process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? FALLBACK;
   }
-  return process.env.NEXT_PUBLIC_API_URL ?? FALLBACK;
+  // Same-origin proxy — see next.config.ts. Relative, so it works unchanged
+  // behind any tunnel or host the frontend happens to be served from.
+  return "/api-proxy";
 }
 
 type Query = Record<string, string | number | boolean | null | undefined>;
@@ -98,9 +102,14 @@ export const getCompanies = (query?: {
   material?: string;
   certification?: string;
   q?: string;
+  min_score?: number;
+  /** Viewer's company id. Governs whether a confidential member's identity is disclosed. */
+  as?: string;
 }) => request<Company[]>(withQuery("/companies", query));
 
-export const getCompany = (id: string) => request<CompanyDetail>(`/companies/${id}`);
+/** `as`: the viewer — a confidential company's identity is masked without it. */
+export const getCompany = (id: string, as?: string) =>
+  request<CompanyDetail>(withQuery(`/companies/${id}`, { as }));
 
 export const getProducts = (query?: {
   category?: string;

@@ -44,9 +44,15 @@ export default async function CompanyProfilePage({
 }) {
   const { id } = await params;
 
+  /* Who is reading — needed up front so a confidential company's identity is
+     resolved (or masked) correctly for this viewer, not the raw record. */
+  const personaId = await getPersonaId();
+  const signedOut = isVisitor(personaId);
+  const viewerId = signedOut ? undefined : personaId;
+
   let detail;
   try {
-    detail = await getCompany(id);
+    detail = await getCompany(id, viewerId);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) notFound();
     throw error;
@@ -55,9 +61,6 @@ export default async function CompanyProfilePage({
   const { company, products, network } = detail;
   const c = company.capabilities;
 
-  /* Who is reading, and where the two companies stand. */
-  const personaId = await getPersonaId();
-  const signedOut = isVisitor(personaId);
   const ownRecord = !signedOut && personaId === company.id;
   const connectionsView =
     signedOut || ownRecord ? null : await getConnections(personaId).catch(() => null);

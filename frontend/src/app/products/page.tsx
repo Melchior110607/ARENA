@@ -12,6 +12,8 @@ import { Monogram } from "@/components/arena/monogram";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getCompanies, getFacets, getProducts } from "@/lib/api";
+import { isVisitor } from "@/lib/persona";
+import { getPersonaId } from "@/lib/persona.server";
 import type { Company, Product } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -83,9 +85,12 @@ export default async function ProductsPage({
     if (value) current[key] = value;
   }
 
+  const personaId = await getPersonaId();
+  const viewerId = isVisitor(personaId) ? undefined : personaId;
+
   const [products, companies, facets] = await Promise.all([
     getProducts(current),
-    getCompanies(),
+    getCompanies({ as: viewerId }),
     getFacets(),
   ]);
 

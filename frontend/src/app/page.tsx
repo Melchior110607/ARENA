@@ -59,7 +59,7 @@ export default async function RootPage() {
 
   const [feed, companies, products] = await Promise.all([
     getFeed(personaId),
-    getCompanies(),
+    getCompanies({ as: personaId }),
     getProducts(),
   ]);
 

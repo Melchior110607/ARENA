@@ -130,7 +130,7 @@ export default async function MessagesPage({
   if (personaId === null) redirect("/");
   const [conversations, companies, products, connectionsView] = await Promise.all([
     getConversations(personaId),
-    getCompanies(),
+    getCompanies({ as: personaId }),
     getProducts(),
     getConnections(personaId).catch(() => null),
   ]);
